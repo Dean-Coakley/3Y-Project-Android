@@ -22,28 +22,44 @@
                 android:id="@+id/scanButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:contentDescription="Scan for nearby OneSheeld devices using Bluetooth. (Make sure Bluetooth is enabled.)"
                 android:text="Scan for OneSheeld"
                 android:visibility="visible" />
 
-            <ToggleButton
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Switch
                 android:id="@+id/toggle_lights"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:height="50dp"
                 android:checked="false"
-                android:text="ToggleButton"
-                android:textOff="Switch Lighting On"
-                android:textOn="Switch Lighting Off"
+                android:padding="5dp"
+                android:text="Lights"
                 android:visibility="visible" />
 
-            <ToggleButton
+            <Switch
                 android:id="@+id/toggle_heating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:height="50dp"
                 android:checked="false"
-                android:textOff="Switch Heating On"
-                android:textOn="Switch Heating Off"
+                android:padding="5dp"
+                android:text="Heating"
                 android:visibility="visible" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/disconnectButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Disconnect" />
 
         </LinearLayout>
     </ScrollView>
