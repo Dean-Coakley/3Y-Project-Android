@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
             //when a disconnect occurs, make sure all device-specific buttons are disabled
             runOnUiThread(new Runnable() {@Override public void run()
             {
-                toggleHeating.setEnabled(true);
-                toggleLights.setEnabled(true);
+                toggleHeating.setEnabled(false);
+                toggleLights.setEnabled(false);
             }
             });
         }
@@ -141,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 manager.disconnectAll();
                 disconnectButton.setEnabled(false);
+                toggleHeating.setEnabled(false);
+                toggleLights.setEnabled(false);
             }
         });
 
