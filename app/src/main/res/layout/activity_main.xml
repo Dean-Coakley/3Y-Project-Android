@@ -11,21 +11,44 @@
 
 
         <ScrollView
-            android:layout_width="622dp"
-            android:layout_height="599dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#b2dfee">
+
+           <!--Header machine broke-->
+
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/header"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="20dp"-->
+                <!--android:text="VCA"-->
+                <!--android:textColor="#000000"-->
+                <!--android:background="#E0FFFF"-->
+                <!--android:layout_alignParentTop="true"/>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:background="#b2dfee">
+
+                <DigitalClock
+                    android:id="@+id/digital_clock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:layout_gravity="center"
+
+                        />
 
                 <Button
                     android:id="@+id/scanButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
-                    android:contentDescription="Scan for nearby OneSheeld devices using Bluetooth. (Make sure Bluetooth is enabled.)"
-                    android:text="Scan for OneSheeld"
+                    android:contentDescription="@string/ScanNearby"
+                    android:text="@string/scanForOnesheeld"
                     android:visibility="visible" />
 
                 <Space
@@ -39,7 +62,7 @@
                     android:height="50dp"
                     android:checked="false"
                     android:padding="5dp"
-                    android:text="Lights"
+                    android:text="@string/lights"
                     android:visibility="visible" />
 
                 <Switch
@@ -49,7 +72,7 @@
                     android:height="50dp"
                     android:checked="false"
                     android:padding="5dp"
-                    android:text="Heating"
+                    android:text="@string/heating"
                     android:visibility="visible" />
 
                 <Space
@@ -60,7 +83,9 @@
                     android:id="@+id/disconnectButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Disconnect" />
+                    android:text="@string/disconnect" />
+
+
 
             </LinearLayout>
         </ScrollView>
@@ -72,6 +97,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:visibility="visible"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
 

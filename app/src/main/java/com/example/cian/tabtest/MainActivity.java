@@ -27,6 +27,17 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.widget.DigitalClock;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.util.Log;
 
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
@@ -42,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     private boolean connected = false;
 
     //GUI
+
     private Button scanButton;
     private Switch toggleLights;
     private Switch toggleHeating;
@@ -164,7 +176,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+           clocc();
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -195,6 +207,9 @@ public class MainActivity extends AppCompatActivity
 
     // GUI SETUP
     public void setupGUI() {
+
+
+
         scanButton = (Button) findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,6 +263,47 @@ public class MainActivity extends AppCompatActivity
         toggleHeating.setEnabled(false);
         toggleLights.setEnabled(false);
         disconnectButton.setEnabled(false);
+
     }
 
+    //digital clock
+    public void clocc() {
+        setContentView(R.layout.activity_main);
+        DigitalClock digital = (DigitalClock) findViewById(R.id.digital_clock);
+    }
+
+    //tempyBoi    setContentView(R.layout.weather);
+    public static JSONObject getWeather(Context c, String city){
+
+        final String OPEN_WEATHER_MAP_API = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric";
+
+        try {
+            URL url = new URL(String.format(OPEN_WEATHER_MAP_API, city));
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+
+            connection.addRequestProperty("843e4efe31788adba107f24909712912\n",
+                    c.getString(R.string.open_weather_maps_app_id));
+
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream()));
+
+            StringBuffer json = new StringBuffer(1024);
+            String tmp="";
+            while((tmp=reader.readLine())!=null)
+                json.append(tmp).append("\n");
+            reader.close();
+
+            JSONObject data = new JSONObject(json.toString());
+
+            // This value will be 404 if the request was not successful
+            if(data.getInt("cod") != 200){
+                return null;
+            }
+
+            return data;
+        }catch(Exception e){
+            return null;
+        }
 }
+}
+
