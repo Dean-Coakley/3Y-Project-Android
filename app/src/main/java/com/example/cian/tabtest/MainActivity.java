@@ -2,8 +2,6 @@ package com.example.cian.tabtest;
 
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,20 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 import android.widget.DigitalClock;
 
 import java.io.BufferedReader;
@@ -35,9 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.json.JSONObject;
-
-import android.content.Context;
-import android.util.Log;
 
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
@@ -176,7 +161,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-           clocc();
+            clock();
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -207,9 +192,6 @@ public class MainActivity extends AppCompatActivity
 
     // GUI SETUP
     public void setupGUI() {
-
-
-
         scanButton = (Button) findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -267,12 +249,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     //digital clock
-    public void clocc() {
+    public void clock() {
         setContentView(R.layout.activity_main);
         DigitalClock digital = (DigitalClock) findViewById(R.id.digital_clock);
     }
 
-    //tempyBoi    setContentView(R.layout.weather);
+    //temperature setContentView(R.layout.weather);
     public static JSONObject getWeather(Context c, String city){
 
         final String OPEN_WEATHER_MAP_API = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric";
@@ -289,6 +271,8 @@ public class MainActivity extends AppCompatActivity
 
             StringBuffer json = new StringBuffer(1024);
             String tmp="";
+
+            // we'll try and clean this up later
             while((tmp=reader.readLine())!=null)
                 json.append(tmp).append("\n");
             reader.close();
@@ -304,6 +288,5 @@ public class MainActivity extends AppCompatActivity
         }catch(Exception e){
             return null;
         }
+    }
 }
-}
-
