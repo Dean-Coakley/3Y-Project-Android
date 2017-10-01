@@ -1,11 +1,10 @@
 package com.example.cian.tabtest;
 
-
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +19,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.DigitalClock;
+import android.Manifest;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity
     private boolean connected = false;
 
     //GUI
-
     private Button scanButton;
     private Switch toggleLights;
     private Switch toggleHeating;
@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity
 
         // GUI SETUP
         setupGUI();
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
