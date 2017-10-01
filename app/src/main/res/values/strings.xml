@@ -1,8 +1,16 @@
 <resources>
-    <string name="app_name">Tab test</string>
+    <string name="app_name">VCA</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="ScanNearby">Scan for nearby OneSheeld devices using Bluetooth. (Make sure Bluetooth is enabled.)</string>
+    <string name="scanForOnesheeld">Scan for OneSheeld</string>
+    <string name="lights">Lights</string>
+    <string name="heating">Heating</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="vca">Virtual Care Assistant</string>
+    <string name="open_weather_maps_app_id">843e4efe31788adba107f24909712912
+</string>
 </resources>
