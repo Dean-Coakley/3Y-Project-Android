@@ -1,7 +1,9 @@
 package com.example.cian.tabtest;
 
 
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity
     private OneSheeldManager manager;
     private OneSheeldDevice sheeldDevice;
 
+    private final int MY_PERMISSIONS_REQUEST_LOCATION = 123456789;
+
     private OneSheeldScanningCallback scanningCallback = new OneSheeldScanningCallback() {
         @Override
         public void onDeviceFind(OneSheeldDevice device){
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity
     };
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +127,31 @@ public class MainActivity extends AppCompatActivity
         manager.addConnectionCallback(connectionCallback);
         manager.addScanningCallback(scanningCallback);
 
+        //Ask for permissions
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale( Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Toast.makeText(this,
+                        "Location required to connect with bluetooth.", Toast.LENGTH_SHORT).show();
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+
+                // MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
 
         // GUI SETUP
         setupGUI();
