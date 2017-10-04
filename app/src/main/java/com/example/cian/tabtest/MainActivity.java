@@ -1,6 +1,7 @@
 package com.example.cian.tabtest;
 
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -151,6 +152,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        //location services init
+        locationServicesInit();
     }
 
     @Override
@@ -319,5 +324,11 @@ public class MainActivity extends AppCompatActivity
         }catch(Exception e){
             return null;
         }
+    }
+
+    //start location services
+    public void locationServicesInit(){
+        LocationServicesManager locationServicesManager = new LocationServicesManager(this);
+        locationServicesManager.locationManagerInit();
     }
 }
