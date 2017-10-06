@@ -13,4 +13,12 @@
     <string name="vca">Virtual Care Assistant</string>
     <string name="open_weather_maps_app_id">843e4efe31788adba107f24909712912
 </string>
+    <string name="order">Order</string>
+    <string name="take_out">Take-Out</string>
+    <string name="shopping">Shopping</string>
+    <string name="taxi">Taxi</string>
+    <string name="home">Home</string>
+    <string name="weather">Weather</string>
+    <string name="game">Game</string>
+    <string name="gps">GPS</string>
 </resources>
