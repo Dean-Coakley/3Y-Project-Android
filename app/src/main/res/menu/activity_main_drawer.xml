@@ -3,33 +3,37 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_menu_home"
+            android:title="@string/home" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_weather"
+            android:icon="@drawable/ic_menu_weather"
+            android:title="@string/weather" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_gps"
+            android:icon="@drawable/ic_menu_gps"
+            android:title="@string/gps" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_game"
+            android:icon="@drawable/ic_menu_game"
+            android:title="@string/game" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/order">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_to"
+                android:icon="@drawable/ic_menu_takeout"
+                android:title="@string/take_out" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_shop"
+                android:icon="@drawable/ic_menu_shop"
+                android:title="@string/shopping" />
+            <item
+                android:id="@+id/nav_taxi"
+                android:icon="@drawable/ic_menu_taxi"
+                android:title="@string/taxi" />
         </menu>
     </item>
 
