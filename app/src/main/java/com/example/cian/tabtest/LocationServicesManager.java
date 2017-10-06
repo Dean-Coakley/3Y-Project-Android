@@ -23,6 +23,9 @@ public class LocationServicesManager implements LocationListener {
     private LocationManager locMan;
     private Location lastLocation;
 
+    // has the location manager been set up to send LocationServicesManager updates?
+    private boolean updatesRequested = false;
+
     // pass the current application context to this class, if in the MainActivity, simply pass 'this'
     public LocationServicesManager(Context c){
         this.currentContext = c;
@@ -52,36 +55,64 @@ public class LocationServicesManager implements LocationListener {
     }
 
     public boolean locationManagerInit() {
-        boolean initSuccess = false;
+        boolean initSuccess;
 
         // TL;DR :  if the permissions for fine location are not granted to the application then...
         if (ActivityCompat.checkSelfPermission(
                 currentContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // this toast message should be replaced with a permissions prompt
-            Toast.makeText(currentContext, "Location Permissions need to be granted for location-based features.", Toast.LENGTH_LONG).show();
+            Toast.makeText(currentContext,
+                    "Location Permissions need to be granted for location-based features.",
+                    Toast.LENGTH_LONG).show();
+
+            initSuccess = false;
+
+
         }
         // if permissions are granted then...
         else {
             //initialize a location manager
             this.locMan = (LocationManager) this.currentContext.getSystemService(Context.LOCATION_SERVICE);
+
+            updatesRequested = setupUpdateRequests(this.locMan);
+            initSuccess = updatesRequested;
+        }
+
+        return initSuccess;
+    }
+
+    // if location-permissions are granted but GPS is disabled, requestLocationUpdates is never called.
+    // this method
+    private boolean setupUpdateRequests(LocationManager lm){
+        //returns true if location updates were successful
+        try {
             boolean isGPSEnabled = this.locMan.isProviderEnabled(LocationManager.GPS_PROVIDER);
             if(isGPSEnabled) {
                 this.locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000, 10, this);
                 this.locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000, 10, this);
                 this.locMan.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 6000, 10, this);
-                initSuccess = true;
+                return true;
             }else{
-                Toast.makeText(currentContext, "Please enable your device's GPS for location-based features", Toast.LENGTH_LONG).show();
+                Toast.makeText(currentContext,
+                        "Please enable your device's GPS for location-based features",
+                        Toast.LENGTH_LONG).show();
+                return false;
             }
-        }
 
-
-        return initSuccess;
+        }catch(SecurityException e){return false;}
     }
-
 
     //gets
     public Location getLastLocation(){
+        // if locman is null, permissions need granting.
+        // they may have been granted since last check, so re-init
+        if (locMan == null) locationManagerInit();
+
+        // if permissions or GPS-services were disabled,
+        // location updates will not have been requested, so re-setup.
+        if (!updatesRequested) {
+            this.updatesRequested = setupUpdateRequests(this.locMan); }
+
         return this.lastLocation;
     }
 }
