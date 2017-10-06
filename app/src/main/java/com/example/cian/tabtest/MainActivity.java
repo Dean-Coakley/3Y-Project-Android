@@ -5,7 +5,6 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,18 +17,15 @@ import android.view.MenuItem;
 import android.content.Context;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.DigitalClock;
 import android.Manifest;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import org.json.JSONObject;
-
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
@@ -40,6 +36,14 @@ import com.integreight.onesheeld.sdk.OneSheeldSdk;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    //Layout references
+    LinearLayout home_view;
+    LinearLayout gps_view;
+
+
+    //Location
+    LocationServicesManager locationServicesManager;
+
     // connected to a OneSheeld?
     private boolean connected = false;
 
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity
     private Switch toggleLights;
     private Switch toggleHeating;
     private Button disconnectButton;
+    private Button getGPS_button;
+
 
     //Sheeld
     private OneSheeldManager manager;
@@ -64,7 +70,6 @@ public class MainActivity extends AppCompatActivity
             device.connect();
         }
     };
-
 
     private OneSheeldConnectionCallback connectionCallback = new OneSheeldConnectionCallback() {
         @Override
@@ -94,7 +99,6 @@ public class MainActivity extends AppCompatActivity
         }
 
     };
-
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -131,7 +135,6 @@ public class MainActivity extends AppCompatActivity
             } else {
 
                 // No explanation needed, we can request the permission.
-
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
 
@@ -194,14 +197,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        // when a new layout needs to be shown, make all other included layout 'GONE',
+        // and make the requested layout 'VISIBLE'
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            clock();
+
         } else if (id == R.id.nav_weather) {
 
         } else if (id == R.id.nav_gps) {
-
+            home_view.setVisibility(View.GONE);
+            gps_view.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_game) {
 
         } else if (id == R.id.nav_to) {
@@ -228,9 +234,30 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-
     // GUI SETUP
     public void setupGUI() {
+        // initialise included-layout references
+        gps_view = (LinearLayout) findViewById(R.id.gps_include_tag);
+        home_view = (LinearLayout) findViewById(R.id.home_layout);
+
+        getGPS_button = (Button) findViewById(R.id.getCoords_button);
+        getGPS_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Location l = locationServicesManager.getLastLocation();
+                String message;
+                if (l != null ) {
+                    message = "Your location is: Lat: " + l.getLatitude()
+                            + ", Lon: " + l.getLongitude();
+
+                    Toast.makeText(getApplicationContext(),
+                            message,
+                            Toast.LENGTH_LONG).show();
+                }
+            }}
+        );
+
+
         scanButton = (Button) findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -272,11 +299,9 @@ public class MainActivity extends AppCompatActivity
         toggleLights.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                 // pin 4 is treated as the "lighting" pin
                 if (isChecked) sheeldDevice.digitalWrite(4, true);
                 else sheeldDevice.digitalWrite(4, false);
-
             }
         });
 
@@ -284,13 +309,6 @@ public class MainActivity extends AppCompatActivity
         toggleHeating.setEnabled(false);
         toggleLights.setEnabled(false);
         disconnectButton.setEnabled(false);
-
-    }
-
-    //digital clock
-    public void clock() {
-        setContentView(R.layout.activity_main);
-        DigitalClock digital = (DigitalClock) findViewById(R.id.digital_clock);
     }
 
     //temperature setContentView(R.layout.weather);
@@ -331,7 +349,7 @@ public class MainActivity extends AppCompatActivity
 
     //start location services
     public void locationServicesInit(){
-        LocationServicesManager locationServicesManager = new LocationServicesManager(this);
+        locationServicesManager = new LocationServicesManager(this);
         locationServicesManager.locationManagerInit();
     }
 }
