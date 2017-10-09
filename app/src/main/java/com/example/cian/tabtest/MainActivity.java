@@ -1,5 +1,6 @@
 package com.example.cian.tabtest;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -119,31 +120,6 @@ public class MainActivity extends AppCompatActivity
         manager.addConnectionCallback(connectionCallback);
         manager.addScanningCallback(scanningCallback);
 
-        //Ask for permissions
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (shouldShowRequestPermissionRationale( Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                Toast.makeText(this,
-                        "Location required to connect with bluetooth.", Toast.LENGTH_SHORT).show();
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-
-                // MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-
         // GUI SETUP
         setupGUI();
 
@@ -234,6 +210,56 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
+    public boolean checkLocationPermission(){
+        boolean granted = false;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (shouldShowRequestPermissionRationale( Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+                    Toast.makeText(this,
+                            "Location required to connect with bluetooth.", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    // No explanation needed, we can request the permission.
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            MY_PERMISSIONS_REQUEST_LOCATION);
+
+                    // MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
+            }
+            else
+                granted = true;
+        }
+
+        return granted;
+    }
+
+    public boolean checkBlueTooth(){
+        boolean active = false;
+
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter != null) {
+            if (mBluetoothAdapter.isEnabled()) {
+                active = true;
+            }
+            else
+                Toast.makeText(this,"Turn on bluetooth to connect.", Toast.LENGTH_LONG).show();
+        }
+        else
+            Toast.makeText(this,"Bluetooth is not supported on this device.", Toast.LENGTH_LONG).show();
+
+        return active;
+    }
     // GUI SETUP
     public void setupGUI() {
         // initialise included-layout references
@@ -263,9 +289,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             //cancel all existing scans / connections in progress befroe rescanning
             public void onClick(View v) {
-                manager.cancelScanning();
-                manager.cancelConnecting();
-                manager.scan();
+                if(checkLocationPermission() && checkBlueTooth()) {
+                    manager.cancelScanning();
+                    manager.cancelConnecting();
+                    manager.scan();
+                }
             }
         });
 
