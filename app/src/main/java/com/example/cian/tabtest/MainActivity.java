@@ -2,10 +2,12 @@ package com.example.cian.tabtest;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.text.Html;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,6 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.Manifest;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -40,10 +43,17 @@ public class MainActivity extends AppCompatActivity
     //Layout references
     LinearLayout home_view;
     LinearLayout gps_view;
+    LinearLayout weather_view;
 
 
     //Location
     LocationServicesManager locationServicesManager;
+
+    //Weather var
+    TextView cityField, detailsField, currentTemperatureField, humidity_field, weatherIcon, updatedField;
+
+    Typeface weatherFont;
+
 
     // connected to a OneSheeld?
     private boolean connected = false;
@@ -135,6 +145,43 @@ public class MainActivity extends AppCompatActivity
 
         //location services init
         locationServicesInit();
+
+        //Weather
+        weatherFont = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/weathericons-regular-webfont.ttf");
+
+        cityField = (TextView)findViewById(R.id.city_field);
+        updatedField = (TextView)findViewById(R.id.updated_field);
+        detailsField = (TextView)findViewById(R.id.details_field);
+        currentTemperatureField = (TextView)findViewById(R.id.current_temperature_field);
+        humidity_field = (TextView)findViewById(R.id.humidity_field);
+        weatherIcon = (TextView)findViewById(R.id.weather_icon);
+        weatherIcon.setTypeface(weatherFont);
+
+
+        Location l = locationServicesManager.getLastLocation();
+
+        Function.placeIdTask asyncTask = new Function.placeIdTask(new Function.AsyncResponse() {
+            public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_updatedOn,String icon, String sun_rise) {
+                cityField.setText(weather_city);
+                updatedField.setText(weather_updatedOn);
+                detailsField.setText(weather_description);
+                currentTemperatureField.setText(weather_temperature);
+                humidity_field.setText(getString(R.string.humid) + weather_humidity);
+                weatherIcon.setText(Html.fromHtml(icon));
+            }
+        });
+        asyncTask.execute("51.9201486", "-8.4912324");
+
+
+        //For parsing longitude and latitude (doubles) into Strings
+//            if (l != null) {
+//            double lat = l.getLatitude();
+//            double lon = l.getLongitude();
+//            String latS = String.valueOf(lat);
+//            String lonS = String.valueOf(lon);
+//            asyncTask.execute(latS, lonS);
+        //asyncTask.execute("Latitude", "Longitude") 51.9201486, -8.4912324
+//        }
     }
 
     @Override
@@ -178,12 +225,20 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            home_view.setVisibility(View.VISIBLE);
+            weather_view.setVisibility(View.GONE);
+            gps_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_weather) {
+            home_view.setVisibility(View.GONE);
+            weather_view.setVisibility(View.VISIBLE);
+            gps_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_gps) {
             home_view.setVisibility(View.GONE);
+            weather_view.setVisibility(View.GONE);
             gps_view.setVisibility(View.VISIBLE);
+
         } else if (id == R.id.nav_game) {
 
         } else if (id == R.id.nav_to) {
@@ -265,6 +320,7 @@ public class MainActivity extends AppCompatActivity
         // initialise included-layout references
         gps_view = (LinearLayout) findViewById(R.id.gps_include_tag);
         home_view = (LinearLayout) findViewById(R.id.home_layout);
+        weather_view = (LinearLayout) findViewById(R.id.weather_id);
 
         getGPS_button = (Button) findViewById(R.id.getCoords_button);
         getGPS_button.setOnClickListener(new View.OnClickListener(){
@@ -339,41 +395,6 @@ public class MainActivity extends AppCompatActivity
         disconnectButton.setEnabled(false);
     }
 
-    //temperature setContentView(R.layout.weather);
-    public static JSONObject getWeather(Context c, String city){
-
-        final String OPEN_WEATHER_MAP_API = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric";
-
-        try {
-            URL url = new URL(String.format(OPEN_WEATHER_MAP_API, city));
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-
-            connection.addRequestProperty("843e4efe31788adba107f24909712912\n",
-                    c.getString(R.string.open_weather_maps_app_id));
-
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(connection.getInputStream()));
-
-            StringBuffer json = new StringBuffer(1024);
-            String tmp="";
-
-            // we'll try and clean this up later
-            while((tmp=reader.readLine())!=null)
-                json.append(tmp).append("\n");
-            reader.close();
-
-            JSONObject data = new JSONObject(json.toString());
-
-            // This value will be 404 if the request was not successful
-            if(data.getInt("cod") != 200){
-                return null;
-            }
-
-            return data;
-        }catch(Exception e){
-            return null;
-        }
-    }
 
     //start location services
     public void locationServicesInit(){
