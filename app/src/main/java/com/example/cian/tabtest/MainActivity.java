@@ -17,7 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.content.Context;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -25,11 +24,7 @@ import android.widget.Switch;
 import android.Manifest;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import org.json.JSONObject;
+
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
@@ -160,7 +155,7 @@ public class MainActivity extends AppCompatActivity
 
         Location l = locationServicesManager.getLastLocation();
 
-        Function.placeIdTask asyncTask = new Function.placeIdTask(new Function.AsyncResponse() {
+        weatherFunction.placeIdTask asyncTask = new weatherFunction.placeIdTask(new weatherFunction.AsyncResponse() {
             public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_updatedOn,String icon, String sun_rise) {
                 cityField.setText(weather_city);
                 updatedField.setText(weather_updatedOn);
