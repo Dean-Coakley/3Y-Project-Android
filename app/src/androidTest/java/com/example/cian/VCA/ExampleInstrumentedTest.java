@@ -1,4 +1,4 @@
-package com.example.cian.tabtest;
+package com.example.cian.VCA;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

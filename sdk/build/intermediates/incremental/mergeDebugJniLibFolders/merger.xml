@@ -1,6 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<merger version="3"><dataSet config="main"><source path="C:\Users\Cian\Desktop\College Shit\3Y-Project-Android\sdk\src\main\jniLibs"/></dataSet><dataSet config="debug"><source path="C:\Users\Cian\Desktop\College Shit\3Y-Project-Android\sdk\src\debug\jniLibs"/></dataSet></merger>
-=======
 <merger version="3"><dataSet config="main"><source path="D:\work\Repos\3Y-Project-Android\sdk\src\main\jniLibs"/></dataSet><dataSet config="debug"><source path="D:\work\Repos\3Y-Project-Android\sdk\src\debug\jniLibs"/></dataSet></merger>
->>>>>>> ec3d30c2725b166911590f194e1eb4e02f0f7710

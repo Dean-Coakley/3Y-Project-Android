@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.cian.tabtest"
+        applicationId "com.SDH3.VCA"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
@@ -29,4 +29,5 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 	compile 'com.integreight.onesheeld:sdk:2.2.0'
     testCompile 'junit:junit:4.12'
+    compile project(path: ':sdk')
 }

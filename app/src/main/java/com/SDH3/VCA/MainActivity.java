@@ -1,4 +1,4 @@
-package com.example.cian.tabtest;
+package com.SDH3.VCA;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
@@ -139,44 +139,22 @@ public class MainActivity extends AppCompatActivity
 
 
         //location services init
-        locationServicesInit();
+        boolean success = locationServicesInit();
 
         //Weather
+        weatherServicesInit();
+        if (success) weatherReport();
+    }
+
+    private void weatherServicesInit() {
         weatherFont = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/weathericons-regular-webfont.ttf");
-
-        cityField = (TextView)findViewById(R.id.city_field);
-        updatedField = (TextView)findViewById(R.id.updated_field);
-        detailsField = (TextView)findViewById(R.id.details_field);
-        currentTemperatureField = (TextView)findViewById(R.id.current_temperature_field);
-        humidity_field = (TextView)findViewById(R.id.humidity_field);
-        weatherIcon = (TextView)findViewById(R.id.weather_icon);
-        weatherIcon.setTypeface(weatherFont);
-
-
-        Location l = locationServicesManager.getLastLocation();
-
-        weatherFunction.placeIdTask asyncTask = new weatherFunction.placeIdTask(new weatherFunction.AsyncResponse() {
-            public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_updatedOn,String icon, String sun_rise) {
-                cityField.setText(weather_city);
-                updatedField.setText(weather_updatedOn);
-                detailsField.setText(weather_description);
-                currentTemperatureField.setText(weather_temperature);
-                humidity_field.setText(getString(R.string.humid) + weather_humidity);
-                weatherIcon.setText(Html.fromHtml(icon));
+        Button refresh = (Button) findViewById(R.id.refresh_weather);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                weatherReport();
             }
         });
-        asyncTask.execute("51.9201486", "-8.4912324");
-
-
-        //For parsing longitude and latitude (doubles) into Strings
-//            if (l != null) {
-//            double lat = l.getLatitude();
-//            double lon = l.getLongitude();
-//            String latS = String.valueOf(lat);
-//            String lonS = String.valueOf(lon);
-//            asyncTask.execute(latS, lonS);
-        //asyncTask.execute("Latitude", "Longitude") 51.9201486, -8.4912324
-//        }
     }
 
     @Override
@@ -321,7 +299,9 @@ public class MainActivity extends AppCompatActivity
         getGPS_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Location l = locationServicesManager.getLastLocation();
+                Location l = null;
+                l = locationServicesManager.getLastLocation();
+
                 String message;
                 if (l != null ) {
                     message = "Your location is: Lat: " + l.getLatitude()
@@ -392,8 +372,41 @@ public class MainActivity extends AppCompatActivity
 
 
     //start location services
-    public void locationServicesInit(){
+    public boolean locationServicesInit(){
         locationServicesManager = new LocationServicesManager(this);
-        locationServicesManager.locationManagerInit();
+        return locationServicesManager.locationManagerInit();
+    }
+
+    //get weather report for current lcoation
+    public void weatherReport(){
+        cityField = (TextView)findViewById(R.id.city_field);
+        updatedField = (TextView)findViewById(R.id.updated_field);
+        detailsField = (TextView)findViewById(R.id.details_field);
+        currentTemperatureField = (TextView)findViewById(R.id.current_temperature_field);
+        humidity_field = (TextView)findViewById(R.id.humidity_field);
+        weatherIcon = (TextView)findViewById(R.id.weather_icon);
+        weatherIcon.setTypeface(weatherFont);
+
+
+        Location l = locationServicesManager.getLastLocation();
+        weatherFunction.placeIdTask asyncTask = new weatherFunction.placeIdTask(new weatherFunction.AsyncResponse() {
+            public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_updatedOn,String icon, String sun_rise) {
+                cityField.setText(weather_city);
+                updatedField.setText(weather_updatedOn);
+                detailsField.setText(weather_description);
+                currentTemperatureField.setText(weather_temperature);
+                humidity_field.setText(getString(R.string.humid) + weather_humidity);
+                weatherIcon.setText(Html.fromHtml(icon));
+            }
+        });
+
+        //For parsing longitude and latitude (doubles) into Strings
+        if (l != null) {
+            double lat = l.getLatitude();
+            double lon = l.getLongitude();
+            String latS = String.valueOf(lat);
+            String lonS = String.valueOf(lon);
+            asyncTask.execute(latS, lonS);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.cian.tabtest;
+package com.SDH3.VCA;
 
 /**
  * Created by SHAJIB on 7/4/2017.
@@ -19,9 +19,6 @@ import java.util.Locale;
 
 
 public class weatherFunction {
-
-    // Project Created by Ferdousur Rahman Shajib
-    // www.androstock.com
 
     private static final String OPEN_WEATHER_MAP_URL =
             "http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&units=metric";
@@ -60,7 +57,6 @@ public class weatherFunction {
 
 
     public interface AsyncResponse {
-
         void processFinish(String city, String desc, String temp, String humid, String update, String icon, String sunrise);
     }
 
@@ -118,10 +114,6 @@ public class weatherFunction {
 
         }
     }
-
-
-
-
 
 
     public static JSONObject getWeatherJSON(String lat, String lon){

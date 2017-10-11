@@ -24,4 +24,5 @@
     <string name="humid">Humidity: </string>
     <string name="sorry_cannot_display_weather">Sorry! Cannot display weather.</string>
     <string name="no_internet_connection">No Internet Connection</string>
+    <string name="refresh">Refresh</string>
 </resources>
