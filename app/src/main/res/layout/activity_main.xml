@@ -48,7 +48,7 @@
                     android:layout_marginBottom="20dp"
                     android:contentDescription="@string/ScanNearby"
                     android:text="@string/scanForOnesheeld"
-                    android:textColor="#3F51B5"
+                    android:textColor="@color/blu"
                     android:visibility="visible" />
 
                 <Space
@@ -63,7 +63,7 @@
                     android:checked="false"
                     android:padding="5dp"
                     android:text="@string/lights"
-                    android:textColor="#3F51B5"
+                    android:textColor="@color/blu"
                     android:visibility="visible" />
 
                 <Switch
@@ -74,7 +74,7 @@
                     android:checked="false"
                     android:padding="5dp"
                     android:text="@string/heating"
-                    android:textColor="#3F51B5"
+                    android:textColor="@color/blu"
                     android:visibility="visible" />
 
                 <Space
@@ -86,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/disconnect"
-                    android:textColor="#3F51B5"/>
+                    android:textColor="@color/blu"/>
 
             </LinearLayout>
         </LinearLayout>

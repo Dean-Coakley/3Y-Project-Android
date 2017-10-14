@@ -10,7 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="#3F51B5"
+            android:textColor="@color/blu"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/sorry_cannot_display_weather"/>
 
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="#3F51B5"
+            android:textColor="@color/blu"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="90sp" />
 
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#3F51B5"
+            android:textColor="@color/blu"
             android:textSize="50sp"
             android:text="@string/no_internet_connection"/>
 
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:gravity="center"
             android:layout_height="wrap_content"
-            android:textColor="#3F51B5"
+            android:textColor="@color/blu"
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="#3F51B5"
+            android:textColor="@color/blu"
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
@@ -57,10 +57,13 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#3F51B5"
+            android:textColor="@color/blu"
             android:textSize="13sp" />
 
+
         <Button
+            android:layout_margin="50dp"
+            android:textColor="@color/blu"
             android:id="@+id/refresh_weather"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
