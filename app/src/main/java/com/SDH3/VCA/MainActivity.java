@@ -125,6 +125,9 @@ public class MainActivity extends AppCompatActivity
         manager.addConnectionCallback(connectionCallback);
         manager.addScanningCallback(scanningCallback);
 
+        //Location Permission prompt
+        checkLocationPermission();
+
         // GUI SETUP
         setupGUI();
 
