@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "714615832758",
+    "firebase_url": "https://y3-project-vca.firebaseio.com",
+    "project_id": "y3-project-vca",
+    "storage_bucket": "y3-project-vca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714615832758:android:cf112f186635ae70",
+        "android_client_info": {
+          "package_name": "com.SDH3.VCA"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714615832758-8fjiup1pt8evuh8cf7usosj0tobpv4d5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMBMi75CIYaIGQC7DfdVdcjFsTHM7aqNY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

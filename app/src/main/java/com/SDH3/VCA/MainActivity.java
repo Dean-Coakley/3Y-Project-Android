@@ -46,9 +46,11 @@ public class MainActivity extends AppCompatActivity
 
     //Weather var
     TextView cityField, detailsField, currentTemperatureField, humidity_field, weatherIcon, updatedField;
-
     Typeface weatherFont;
 
+
+    //Database
+    DbManager db;
 
     // connected to a OneSheeld?
     private boolean connected = false;
@@ -147,6 +149,10 @@ public class MainActivity extends AppCompatActivity
         //Weather
         weatherServicesInit();
         if (success) weatherReport();
+
+
+        //Database
+        db = new DbManager();
     }
 
     private void weatherServicesInit() {
@@ -307,12 +313,17 @@ public class MainActivity extends AppCompatActivity
 
                 String message;
                 if (l != null ) {
-                    message = "Your location is: Lat: " + l.getLatitude()
-                            + ", Lon: " + l.getLongitude();
+                    double lon = l.getLongitude();
+                    double lat = l.getLatitude();
+
+                    message = "Your location is: Lat: " + lat
+                            + ", Lon: " + lon;
 
                     Toast.makeText(getApplicationContext(),
                             message,
                             Toast.LENGTH_LONG).show();
+
+                    db.setPatientCoordinates(lat, lon, "Tomas", "uniqueIDShouldGoHere");
                 }
             }}
         );
