@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "D:\\work\\Repos\\3Y-Project-Android\\sdk\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
+        "outputFile": "C:\\Users\\WolvGaming\\Documents\\GitHub\\3Y-Project-Android\\sdk\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
         "map": [
             {
                 "to": {
@@ -11,7 +11,11 @@
                     "endOffset": 104
                 },
                 "from": {
+<<<<<<< HEAD
                     "file": "D:\\work\\Repos\\3Y-Project-Android\\sdk\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+=======
+                    "file": "C:\\Users\\WolvGaming\\Documents\\GitHub\\3Y-Project-Android\\sdk\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+>>>>>>> 5d729526588725a2ac0fbed99d9ac49ea604dbbe
                     "position": {
                         "startLine": 2,
                         "startColumn": 4,

@@ -17,6 +17,7 @@
 
             <!--  this layout will 'include' all other layouts.
             to switch between them, visibility is toggled. -->
+
             <include layout = "@layout/gps_view_main"
                 android:id="@+id/gps_include_tag"
                 android:visibility="gone"/>
@@ -87,6 +88,19 @@
                     android:layout_height="wrap_content"
                     android:text="@string/disconnect"
                     android:textColor="@color/blu"/>
+
+                <TextView
+                    android:id="@+id/txtSpeechInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tap Button to Record Voice" />
+
+                <Button
+                    android:id="@+id/btnSpeak"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Microphone" />
 
             </LinearLayout>
         </LinearLayout>

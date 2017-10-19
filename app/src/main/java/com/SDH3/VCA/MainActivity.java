@@ -1,11 +1,14 @@
 package com.SDH3.VCA;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.annotation.RequiresApi;
 import android.text.Html;
 import android.view.View;
@@ -30,6 +33,9 @@ import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
 import com.integreight.onesheeld.sdk.OneSheeldScanningCallback;
 import com.integreight.onesheeld.sdk.OneSheeldSdk;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity
@@ -67,7 +73,12 @@ public class MainActivity extends AppCompatActivity
     private OneSheeldManager manager;
     private OneSheeldDevice sheeldDevice;
 
+    //Speech recognition
+    private TextView txtSpeechInput;
+    private Button btnSpeak;
+
     private final int MY_PERMISSIONS_REQUEST_LOCATION = 123456789;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
 
     private OneSheeldScanningCallback scanningCallback = new OneSheeldScanningCallback() {
         @Override
@@ -150,9 +161,19 @@ public class MainActivity extends AppCompatActivity
         weatherServicesInit();
         if (success) weatherReport();
 
-
         //Database
         db = new DbManager();
+
+        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        btnSpeak = (Button) findViewById(R.id.btnSpeak);
+
+        btnSpeak.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                promptSpeechInput();
+            }
+        });
     }
 
     private void weatherServicesInit() {
@@ -421,6 +442,46 @@ public class MainActivity extends AppCompatActivity
             String latS = String.valueOf(lat);
             String lonS = String.valueOf(lon);
             asyncTask.execute(latS, lonS);
+        }
+    }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Receiving speech input
+     * */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    txtSpeechInput.setText(result.get(0));
+                }
+                break;
+            }
+
         }
     }
 }
