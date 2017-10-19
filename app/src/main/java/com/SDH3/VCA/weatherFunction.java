@@ -1,14 +1,9 @@
 package com.SDH3.VCA;
 
-/**
- * Created by SHAJIB on 7/4/2017.
- */
 import android.os.AsyncTask;
 import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -16,7 +11,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
-
 
 public class weatherFunction {
 
