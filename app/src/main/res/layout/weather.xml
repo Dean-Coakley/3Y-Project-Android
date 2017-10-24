@@ -31,7 +31,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/blu"
             android:textSize="50sp"
-            android:text="@string/no_internet_connection"/>
+            android:text="@string/click_below_to_refresh"/>
 
         <TextView
             android:id="@+id/details_field"

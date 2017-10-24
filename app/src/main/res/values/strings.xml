@@ -24,4 +24,12 @@
     <string name="refresh">Refresh</string>
     <string name="speech_prompt">Speak now</string>
     <string name="speech_not_supported">This device does not support speach recognition.</string>
+    <string name="dinos">Dinos</string>
+    <string name="call">Call</string>
+    <string name="click_below_to_refresh">Click Below to Refresh</string>
+    <string name="dominos">Dominos</string>
+    <string name="ring">Ring:</string>
+    <string name="go_to_website">Go to Website</string>
+    <string name="tesco">Tesco</string>
+    <string name="satellite_taxis">Satellite Taxis</string>
 </resources>

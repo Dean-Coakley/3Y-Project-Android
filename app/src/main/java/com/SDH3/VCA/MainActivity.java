@@ -2,14 +2,19 @@ package com.SDH3.VCA;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.Html;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -45,7 +50,9 @@ public class MainActivity extends AppCompatActivity
     LinearLayout home_view;
     LinearLayout gps_view;
     LinearLayout weather_view;
-
+    LinearLayout take_out_view;
+    LinearLayout shop_view;
+    LinearLayout taxi_view;
 
     //Location
     LocationServicesManager locationServicesManager;
@@ -80,9 +87,22 @@ public class MainActivity extends AppCompatActivity
     private final int MY_PERMISSIONS_REQUEST_LOCATION = 123456789;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
+    //Call Buttons
+    private Button dinosButton;
+    private Button dominosButton;
+    private Button satelliteTaxis;
+
+    //WebPageButtons
+    private Button dinosWeb;
+    private Button tescoWeb;
+
+    // Call Permission final variables
+    private final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
+    private final int PERMISSION_REQUEST = 100;
+
     private OneSheeldScanningCallback scanningCallback = new OneSheeldScanningCallback() {
         @Override
-        public void onDeviceFind(OneSheeldDevice device){
+        public void onDeviceFind(OneSheeldDevice device) {
             //cancel further scanning
             manager.cancelScanning();
             //connect to first-found oneSheeld
@@ -96,12 +116,13 @@ public class MainActivity extends AppCompatActivity
             sheeldDevice = device;
 
             // when a connection is established, enable device-specific buttons
-            runOnUiThread(new Runnable() {@Override public void run()
-            {
-                toggleHeating.setEnabled(true);
-                toggleLights.setEnabled(true);
-                disconnectButton.setEnabled(true);
-            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    toggleHeating.setEnabled(true);
+                    toggleLights.setEnabled(true);
+                    disconnectButton.setEnabled(true);
+                }
             });
         }
 
@@ -109,11 +130,12 @@ public class MainActivity extends AppCompatActivity
             sheeldDevice = null;
 
             //when a disconnect occurs, make sure all device-specific buttons are disabled
-            runOnUiThread(new Runnable() {@Override public void run()
-            {
-                toggleHeating.setEnabled(false);
-                toggleLights.setEnabled(false);
-            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    toggleHeating.setEnabled(false);
+                    toggleLights.setEnabled(false);
+                }
             });
         }
 
@@ -141,6 +163,9 @@ public class MainActivity extends AppCompatActivity
         //Location Permission prompt
         checkLocationPermission();
 
+        //Call Permission Prompt
+        checkCallPermission();
+
         // GUI SETUP
         setupGUI();
 
@@ -156,10 +181,10 @@ public class MainActivity extends AppCompatActivity
 
         //location services init
         boolean success = locationServicesInit();
-
         //Weather
         weatherServicesInit();
-        if (success) weatherReport();
+        if (success)
+            weatherReport();
 
         //Database
         db = new DbManager();
@@ -172,6 +197,51 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 promptSpeechInput();
+            }
+        });
+
+        dinosButton = (Button) findViewById(R.id.takeoutbutton);
+        dinosButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                callNumberButtonOnClick("0897063420");
+            }
+        });
+
+        dominosButton = (Button) findViewById(R.id.takeoutbutton2);
+        dominosButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                callNumberButtonOnClick("0851130002");
+            }
+        });
+
+        dinosWeb = (Button) findViewById(R.id.takeoutwebsite);
+        dinosWeb.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                openWebpage("https://www.facebook.com/DinosChips/");
+            }
+        });
+
+        tescoWeb = (Button) findViewById(R.id.tescowebsite);
+        tescoWeb.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                openWebpage("https://www.tesco.ie/groceries/?sc_cmp=ppc*sl*me*bg*px_-_campaign_not_set*tesco&gclid=Cj0KCQjwybvPBRDBARIsAA7T2kgn0Oge1-twtyQZS0nFKXm7cTDPaC6jRLrfEzn0krrZmH4LojkxkOMaAoW8EALw_wcB");
+            }
+        });
+
+        satelliteTaxis = (Button) findViewById(R.id.satNum);
+        satelliteTaxis.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                callNumberButtonOnClick("0897063420");
             }
         });
     }
@@ -231,26 +301,52 @@ public class MainActivity extends AppCompatActivity
             home_view.setVisibility(View.VISIBLE);
             weather_view.setVisibility(View.GONE);
             gps_view.setVisibility(View.GONE);
+            take_out_view.setVisibility(View.GONE);
+            shop_view.setVisibility(View.GONE);
+            taxi_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_weather) {
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.VISIBLE);
             gps_view.setVisibility(View.GONE);
+            take_out_view.setVisibility(View.GONE);
+            shop_view.setVisibility(View.GONE);
+            taxi_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_gps) {
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.GONE);
             gps_view.setVisibility(View.VISIBLE);
+            take_out_view.setVisibility(View.GONE);
+            shop_view.setVisibility(View.GONE);
+            taxi_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_game) {
 
+
         } else if (id == R.id.nav_to) {
+            home_view.setVisibility(View.GONE);
+            weather_view.setVisibility(View.GONE);
+            gps_view.setVisibility(View.GONE);
+            take_out_view.setVisibility(View.VISIBLE);
+            shop_view.setVisibility(View.GONE);
+            taxi_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_shop) {
+            home_view.setVisibility(View.GONE);
+            weather_view.setVisibility(View.GONE);
+            gps_view.setVisibility(View.GONE);
+            take_out_view.setVisibility(View.GONE);
+            shop_view.setVisibility(View.VISIBLE);
+            taxi_view.setVisibility(View.GONE);
 
-        }
-        else if (id == R.id.nav_taxi) {
-
+        } else if (id == R.id.nav_taxi) {
+            home_view.setVisibility(View.GONE);
+            weather_view.setVisibility(View.GONE);
+            gps_view.setVisibility(View.GONE);
+            take_out_view.setVisibility(View.GONE);
+            shop_view.setVisibility(View.GONE);
+            taxi_view.setVisibility(View.VISIBLE);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -260,7 +356,7 @@ public class MainActivity extends AppCompatActivity
 
     //cleanly disconnect all devices if app is nearly destruction
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         manager.disconnectAll();
         manager.cancelConnecting();
         manager.cancelScanning();
@@ -268,7 +364,37 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    public boolean checkLocationPermission(){
+    public boolean checkCallPermission() {
+        boolean granted = false;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CALL_PHONE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE)) {
+
+                    Toast.makeText(this,
+                            "Permissions Required to make call.", Toast.LENGTH_LONG).show();
+
+                } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
+
+                    Toast.makeText(this,
+                            "Permissions Required to make call.", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    requestPermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE},
+                            PERMISSION_REQUEST);
+                }
+            } else
+                granted = true;
+        }
+
+        return granted;
+    }
+
+
+    public boolean checkLocationPermission() {
         boolean granted = false;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -276,7 +402,7 @@ public class MainActivity extends AppCompatActivity
                     != PackageManager.PERMISSION_GRANTED) {
 
                 // Should we show an explanation?
-                if (shouldShowRequestPermissionRationale( Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                     // Show an explanation to the user *asynchronously* -- don't block
                     // this thread waiting for the user's response! After the user
@@ -286,7 +412,6 @@ public class MainActivity extends AppCompatActivity
 
                 } else {
 
-                    // No explanation needed, we can request the permission.
                     requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                             MY_PERMISSIONS_REQUEST_LOCATION);
 
@@ -294,59 +419,61 @@ public class MainActivity extends AppCompatActivity
                     // app-defined int constant. The callback method gets the
                     // result of the request.
                 }
-            }
-            else
+            } else
                 granted = true;
         }
 
         return granted;
     }
 
-    public boolean checkBlueTooth(){
+    public boolean checkBlueTooth() {
         boolean active = false;
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter != null) {
             if (mBluetoothAdapter.isEnabled()) {
                 active = true;
-            }
-            else
-                Toast.makeText(this,"Turn on bluetooth to connect.", Toast.LENGTH_LONG).show();
-        }
-        else
-            Toast.makeText(this,"Bluetooth is not supported on this device.", Toast.LENGTH_LONG).show();
+            } else
+                Toast.makeText(this, "Turn on bluetooth to connect.", Toast.LENGTH_LONG).show();
+        } else
+            Toast.makeText(this, "Bluetooth is not supported on this device.", Toast.LENGTH_LONG).show();
 
         return active;
     }
+
     // GUI SETUP
     public void setupGUI() {
         // initialise included-layout references
         gps_view = (LinearLayout) findViewById(R.id.gps_include_tag);
         home_view = (LinearLayout) findViewById(R.id.home_layout);
         weather_view = (LinearLayout) findViewById(R.id.weather_id);
+        take_out_view = (LinearLayout) findViewById(R.id.takeoutid);
+        shop_view = (LinearLayout) findViewById(R.id.shop_id);
+        taxi_view = (LinearLayout) findViewById(R.id.taxi_id);
 
         getGPS_button = (Button) findViewById(R.id.getCoords_button);
-        getGPS_button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Location l = null;
-                l = locationServicesManager.getLastLocation();
+        getGPS_button.setOnClickListener(new View.OnClickListener() {
+                                             @Override
+                                             public void onClick(View v) {
+                                                 Location l = null;
+                                                 l = locationServicesManager.getLastLocation();
 
-                String message;
-                if (l != null ) {
-                    double lon = l.getLongitude();
-                    double lat = l.getLatitude();
+                                                 String message;
+                                                 if (l != null) {
+                                                     double lon = l.getLongitude();
+                                                     double lat = l.getLatitude();
 
-                    message = "Your location is: Lat: " + lat
-                            + ", Lon: " + lon;
+                                                     message = "Your location is: Lat: " + lat
+                                                             + ", Lon: " + lon;
 
-                    Toast.makeText(getApplicationContext(),
-                            message,
-                            Toast.LENGTH_LONG).show();
+                                                     Toast.makeText(getApplicationContext(),
+                                                             message,
+                                                             Toast.LENGTH_LONG).show();
 
-                    db.setPatientCoordinates(lat, lon, "Tomas", "uniqueIDShouldGoHere");
-                }
-            }}
+                                                     db.setPatientCoordinates(lat, lon, "Tomas", "uniqueIDShouldGoHere");
+                                                 }
+                                             }
+                                         }
         );
 
 
@@ -355,7 +482,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             //cancel all existing scans / connections in progress befroe rescanning
             public void onClick(View v) {
-                if(checkLocationPermission() && checkBlueTooth()) {
+                if (checkLocationPermission() && checkBlueTooth()) {
                     manager.cancelScanning();
                     manager.cancelConnecting();
                     manager.scan();
@@ -365,7 +492,7 @@ public class MainActivity extends AppCompatActivity
 
         //disconnects all devices
         disconnectButton = (Button) findViewById(R.id.disconnectButton);
-        disconnectButton.setOnClickListener(new View.OnClickListener(){
+        disconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 manager.disconnectAll();
@@ -377,7 +504,7 @@ public class MainActivity extends AppCompatActivity
 
         // add heating toggling functionality
         toggleHeating = (Switch) findViewById(R.id.toggle_heating);
-        toggleHeating.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        toggleHeating.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
@@ -390,7 +517,7 @@ public class MainActivity extends AppCompatActivity
 
         // add lighting toggling functionality
         toggleLights = (Switch) findViewById(R.id.toggle_lights);
-        toggleLights.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        toggleLights.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // pin 4 is treated as the "lighting" pin
@@ -407,25 +534,25 @@ public class MainActivity extends AppCompatActivity
 
 
     //start location services
-    public boolean locationServicesInit(){
+    public boolean locationServicesInit() {
         locationServicesManager = new LocationServicesManager(this);
         return locationServicesManager.locationManagerInit();
     }
 
-    //get weather report for current lcoation
-    public void weatherReport(){
-        cityField = (TextView)findViewById(R.id.city_field);
-        updatedField = (TextView)findViewById(R.id.updated_field);
-        detailsField = (TextView)findViewById(R.id.details_field);
-        currentTemperatureField = (TextView)findViewById(R.id.current_temperature_field);
-        humidity_field = (TextView)findViewById(R.id.humidity_field);
-        weatherIcon = (TextView)findViewById(R.id.weather_icon);
+    //get weather report for current location
+    public void weatherReport() {
+        cityField = (TextView) findViewById(R.id.city_field);
+        updatedField = (TextView) findViewById(R.id.updated_field);
+        detailsField = (TextView) findViewById(R.id.details_field);
+        currentTemperatureField = (TextView) findViewById(R.id.current_temperature_field);
+        humidity_field = (TextView) findViewById(R.id.humidity_field);
+        weatherIcon = (TextView) findViewById(R.id.weather_icon);
         weatherIcon.setTypeface(weatherFont);
 
 
         Location l = locationServicesManager.getLastLocation();
         weatherFunction.placeIdTask asyncTask = new weatherFunction.placeIdTask(new weatherFunction.AsyncResponse() {
-            public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_updatedOn,String icon, String sun_rise) {
+            public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_updatedOn, String icon, String sun_rise) {
                 cityField.setText(weather_city);
                 updatedField.setText(weather_updatedOn);
                 detailsField.setText(weather_description);
@@ -483,5 +610,27 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
+    }
+
+    public void callNumberButtonOnClick(final String s) {
+
+        //Take Out Phone call
+        CallListener phoneListener = new CallListener();
+        final TelephonyManager telephonyM = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        telephonyM.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
+
+        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + s));
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            startActivityForResult(callIntent, 100);
+            return;
+        }
+    }
+
+    public void openWebpage(String url)
+    {
+        Intent page = new Intent(Intent.ACTION_VIEW);
+        page.setData(Uri.parse(url));
+        startActivity(page);
     }
 }
