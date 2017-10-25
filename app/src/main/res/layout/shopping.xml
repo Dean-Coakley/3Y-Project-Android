@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:layout_gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/takeoutHead"
+        android:text="@string/shopping"
+        android:gravity="center"
+        android:textColor="@color/blu"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/extra_medium" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tesco"
+        android:text="@string/tesco"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:paddingTop="30dp"
+        android:textSize="@dimen/small_medium"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tescowebsite"
+            android:text="@string/go_to_website"
+            android:textColor="@color/blu"
+            android:layout_gravity="center"/>
+
+</LinearLayout>

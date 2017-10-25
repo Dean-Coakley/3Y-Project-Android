@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:layout_gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/takeoutHead"
+        android:text="@string/take_out"
+        android:gravity="center"
+        android:textColor="@color/blu"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/extra_medium"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/takeoutname"
+            android:text="@string/dinos"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:paddingTop="30dp"
+            android:textSize="@dimen/small_medium"/>
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:orientation="horizontal"
+           android:paddingLeft="100dp">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/takeoutbutton"
+                android:text="@string/call"
+                android:textColor="@color/blu"
+                />
+           <Button
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/takeoutwebsite"
+               android:text="@string/go_to_website"
+               android:textColor="@color/blu"
+               />
+
+       </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/takeoutname2"
+            android:text="@string/dominos"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:paddingTop="30dp"
+            android:textSize="@dimen/small_medium"/>/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/takeoutbutton2"
+                android:text="@string/call"
+                android:textColor="@color/blu"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/takeoutwebsite2"
+                android:text="@string/go_to_website"
+                android:textColor="@color/blu"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
