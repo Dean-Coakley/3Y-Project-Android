@@ -163,9 +163,6 @@ public class MainActivity extends AppCompatActivity
         //Location Permission prompt
         checkLocationPermission();
 
-        //Call Permission Prompt
-        checkCallPermission();
-
         // GUI SETUP
         setupGUI();
 
@@ -241,7 +238,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                callNumberButtonOnClick("0897063420");
+                callNumberButtonOnClick("1234567890");
             }
         });
     }
@@ -613,6 +610,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void callNumberButtonOnClick(final String s) {
+
+        //Call Permission Prompt
+        checkCallPermission();
 
         //Take Out Phone call
         CallListener phoneListener = new CallListener();
