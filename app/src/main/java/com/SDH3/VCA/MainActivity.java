@@ -434,9 +434,9 @@ public class MainActivity extends AppCompatActivity
             if (mBluetoothAdapter.isEnabled()) {
                 active = true;
             } else
-                Toast.makeText(this, "Turn on bluetooth to connect.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.turn_on_bt, Toast.LENGTH_LONG).show();
         } else
-            Toast.makeText(this, "Bluetooth is not supported on this device.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.bt_support, Toast.LENGTH_LONG).show();
 
         return active;
     }
@@ -624,6 +624,10 @@ public class MainActivity extends AppCompatActivity
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
             startActivityForResult(callIntent, 100);
             return;
+        }
+        else {
+            Toast.makeText(this, R.string.call_permission_ungranted, Toast.LENGTH_LONG).show();
+
         }
     }
 

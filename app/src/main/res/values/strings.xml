@@ -32,4 +32,7 @@
     <string name="go_to_website">Go to Website</string>
     <string name="tesco">Tesco</string>
     <string name="satellite_taxis">Satellite Taxis</string>
+    <string name="call_permission_ungranted">You did not give permissions to make calls</string>
+    <string name="turn_on_bt">Turn on bluetooth to connect.</string>
+    <string name="bt_support">Bluetooth is not supported on this device.</string>
 </resources>
