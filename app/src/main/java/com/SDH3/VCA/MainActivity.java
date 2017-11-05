@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity
 
     //Database
     DbManager db;
+    UserProfile user;
 
     // connected to a OneSheeld?
     private boolean connected = false;
@@ -185,6 +186,7 @@ public class MainActivity extends AppCompatActivity
 
         //Database
         db = new DbManager();
+        user = new UserProfile();
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
         btnSpeak = (Button) findViewById(R.id.btnSpeak);
@@ -449,30 +451,29 @@ public class MainActivity extends AppCompatActivity
         taxi_view = (LinearLayout) findViewById(R.id.taxi_id);
 
         getGPS_button = (Button) findViewById(R.id.getCoords_button);
-        getGPS_button.setOnClickListener(new View.OnClickListener() {
-                                             @Override
-                                             public void onClick(View v) {
-                                                 Location l = null;
-                                                 l = locationServicesManager.getLastLocation();
+        getGPS_button.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Location l = null;
+                        l = locationServicesManager.getLastLocation();
+                        String message;
+                        if (l != null) {
+                            double lon = l.getLongitude();
+                            double lat = l.getLatitude();
 
-                                                 String message;
-                                                 if (l != null) {
-                                                     double lon = l.getLongitude();
-                                                     double lat = l.getLatitude();
+                            message = "Your location is: Lat: " + lat
+                                    + ", Lon: " + lon;
 
-                                                     message = "Your location is: Lat: " + lat
-                                                             + ", Lon: " + lon;
+                            Toast.makeText(getApplicationContext(),
+                                    message,
+                                    Toast.LENGTH_LONG).show();
 
-                                                     Toast.makeText(getApplicationContext(),
-                                                             message,
-                                                             Toast.LENGTH_LONG).show();
-
-                                                     db.setPatientCoordinates(lat, lon, "Tomas", "uniqueIDShouldGoHere");
-                                                 }
-                                             }
-                                         }
+                            db.setPatientCoordinates(lat, lon, user.getCARER_NAME(), user.getUsername());
+                        }
+                    }
+                }
         );
-
 
         scanButton = (Button) findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
@@ -571,7 +572,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Showing google speech input dialog
-     * */
+     */
     private void promptSpeechInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -590,7 +591,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Receiving speech input
-     * */
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -624,15 +625,13 @@ public class MainActivity extends AppCompatActivity
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
             startActivityForResult(callIntent, 100);
             return;
-        }
-        else {
+        } else {
             Toast.makeText(this, R.string.call_permission_ungranted, Toast.LENGTH_LONG).show();
 
         }
     }
 
-    public void openWebpage(String url)
-    {
+    public void openWebpage(String url) {
         Intent page = new Intent(Intent.ACTION_VIEW);
         page.setData(Uri.parse(url));
         startActivity(page);

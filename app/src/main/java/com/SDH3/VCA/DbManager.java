@@ -43,12 +43,14 @@ public class DbManager {
             patientsDB.child(CARERS_DB_TAG)
                     .child(carerName)
                     .child(PATIENTS_DB_TAG)
+                    .child(patientName)
                     .child(PATIENT_LATITUDE_DB_TAG)
                     .setValue(lat);
 
             patientsDB.child(CARERS_DB_TAG)
                     .child(carerName)
                     .child(PATIENTS_DB_TAG)
+                    .child(patientName)
                     .child(PATIENT_LONGITUDE_DB_TAG)
                     .setValue(lon);
 
