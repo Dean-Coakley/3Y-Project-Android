@@ -37,4 +37,9 @@
     <string name="bt_support">Bluetooth no es compatible con este dispositivo.</string>
     <string name="call_per">Permisos necesarios para hacer una llamada.</string>
     <string name="loc_req_blue">Ubicación requerida para conectarse con bluetooth.</string>
+    <string name="enter_your_username">Ingrese su nombre de usuario:</string>
+    <string name="username">Usuario</string>
+    <string name="enter_your_password">Introduzca su contraseña:</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar sesión</string>
 </resources>

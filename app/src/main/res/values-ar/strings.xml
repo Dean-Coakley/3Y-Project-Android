@@ -37,4 +37,9 @@
     <string name="bt_support">لا يتم دعم البلوتوث على هذا الجهاز.</string>
     <string name="call_per">الأذونات المطلوبة لإجراء مكالمة.</string>
     <string name="loc_req_blue">الموقع المطلوب للتواصل مع بلوتوث.</string>
+    <string name="enter_your_username">ادخل رقمك السري:</string>
+    <string name="username">اسم المستخدم</string>
+    <string name="enter_your_password">ادخل رقمك السري:</string>
+    <string name="password">كلمه السر</string>
+    <string name="login">تسجيل الدخول</string>
 </resources>
