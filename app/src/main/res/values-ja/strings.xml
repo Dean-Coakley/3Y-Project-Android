@@ -37,4 +37,9 @@
     <string name="bt_support">このデバイスではBluetoothはサポートされていません。</string>
     <string name="call_per">電話をかけるために必要なアクセス許可.</string>
     <string name="loc_req_blue">ブルートゥースと接続するために必要な場所</string>
+    <string name="enter_your_username">あなたのユーザー名を入力してください：</string>
+    <string name="username">ユーザー名</string>
+    <string name="enter_your_password">パスワードを入力してください:</string>
+    <string name="password">パスワード</string>
+    <string name="login">ログイン</string>
 </resources>
