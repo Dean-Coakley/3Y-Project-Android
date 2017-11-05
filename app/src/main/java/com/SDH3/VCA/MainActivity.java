@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                callNumberButtonOnClick("0897063420");
+                callNumberButtonOnClick("0210000001");
             }
         });
 
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                callNumberButtonOnClick("0851130002");
+                callNumberButtonOnClick("0210000001");
             }
         });
 
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                callNumberButtonOnClick("1234567890");
+                callNumberButtonOnClick("0210000001");
             }
         });
     }
@@ -371,12 +371,12 @@ public class MainActivity extends AppCompatActivity
                 if (shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE)) {
 
                     Toast.makeText(this,
-                            "Permissions Required to make call.", Toast.LENGTH_LONG).show();
+                            R.string.call_per, Toast.LENGTH_LONG).show();
 
                 } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
 
                     Toast.makeText(this,
-                            "Permissions Required to make call.", Toast.LENGTH_LONG).show();
+                            R.string.call_per, Toast.LENGTH_LONG).show();
 
                 } else {
 
@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity
                     // this thread waiting for the user's response! After the user
                     // sees the explanation, try again to request the permission.
                     Toast.makeText(this,
-                            "Location required to connect with bluetooth.", Toast.LENGTH_LONG).show();
+                            R.string.loc_req_blue, Toast.LENGTH_LONG).show();
 
                 } else {
 
