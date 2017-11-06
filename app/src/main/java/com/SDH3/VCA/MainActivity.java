@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.Manifest;
@@ -82,7 +83,8 @@ public class MainActivity extends AppCompatActivity
 
     //Speech recognition
     private TextView txtSpeechInput;
-    private Button btnSpeak;
+    private ImageButton btnSpeak;
+    private boolean connectedToSheeld;
 
     private final int MY_PERMISSIONS_REQUEST_LOCATION = 123456789;
     private final int REQ_CODE_SPEECH_INPUT = 100;
@@ -114,6 +116,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onConnect(OneSheeldDevice device) {
             sheeldDevice = device;
+            connectedToSheeld = true;
 
             // when a connection is established, enable device-specific buttons
             runOnUiThread(new Runnable() {
@@ -128,6 +131,7 @@ public class MainActivity extends AppCompatActivity
 
         public void onDisconnect(OneSheeldDevice device) {
             sheeldDevice = null;
+            connectedToSheeld = false;
 
             //when a disconnect occurs, make sure all device-specific buttons are disabled
             runOnUiThread(new Runnable() {
@@ -187,7 +191,7 @@ public class MainActivity extends AppCompatActivity
         db = new DbManager();
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
-        btnSpeak = (Button) findViewById(R.id.btnSpeak);
+        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
 
@@ -241,6 +245,8 @@ public class MainActivity extends AppCompatActivity
                 callNumberButtonOnClick("0210000001");
             }
         });
+
+        connectedToSheeld = false;
     }
 
     private void weatherServicesInit() {
@@ -479,13 +485,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             //cancel all existing scans / connections in progress befroe rescanning
             public void onClick(View v) {
-                if (checkLocationPermission() && checkBlueTooth()) {
-                    manager.cancelScanning();
-                    manager.cancelConnecting();
-                    manager.scan();
-                }
+                scan();
             }
         });
+
+
 
         //disconnects all devices
         disconnectButton = (Button) findViewById(R.id.disconnectButton);
@@ -529,6 +533,15 @@ public class MainActivity extends AppCompatActivity
         disconnectButton.setEnabled(false);
     }
 
+
+
+    public void scan(){
+        if (checkLocationPermission() && checkBlueTooth()) {
+            manager.cancelScanning();
+            manager.cancelConnecting();
+            manager.scan();
+        }
+    }
 
     //start location services
     public boolean locationServicesInit() {
@@ -577,8 +590,7 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                getString(R.string.speech_prompt));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, R.string.speech_prompt);
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
         } catch (ActivityNotFoundException a) {
@@ -602,10 +614,10 @@ public class MainActivity extends AppCompatActivity
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     txtSpeechInput.setText(result.get(0));
+                    voiceCommand(result.get(0));
                 }
                 break;
             }
-
         }
     }
 
@@ -629,6 +641,45 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, R.string.call_permission_ungranted, Toast.LENGTH_LONG).show();
 
         }
+    }
+
+    public void voiceCommand(String command){
+        if(command.contains("weather")){
+            Toast.makeText(this, R.string.acquiringWeather, Toast.LENGTH_SHORT).show();
+            weatherReport();
+        }
+        else if(command.contains("scan")){
+            Toast.makeText(this, R.string.connectingOneSheeld, Toast.LENGTH_SHORT).show();
+            scan();
+        }
+        else if(command.contains("lights")){
+            if(connectedToSheeld) {
+                if (command.contains("on")) {
+                    Toast.makeText(this, R.string.turningOnLights, Toast.LENGTH_SHORT).show();
+                    sheeldDevice.digitalWrite(4, true);
+                } else if (command.contains("off")) {
+                    Toast.makeText(this, R.string.turningOffLights, Toast.LENGTH_SHORT).show();
+                    sheeldDevice.digitalWrite(4, false);
+                }
+            }
+            else
+                Toast.makeText(this, R.string.noConnectionLights, Toast.LENGTH_SHORT).show();
+        }
+        else if(command.contains("heating")){
+            if(connectedToSheeld) {
+                if (command.contains("on")) {
+                    Toast.makeText(this, R.string.turningOnHeating, Toast.LENGTH_SHORT).show();
+                    sheeldDevice.digitalWrite(3, true);
+                } else if (command.contains("off")) {
+                    Toast.makeText(this, R.string.turningOffHeating, Toast.LENGTH_SHORT).show();
+                    sheeldDevice.digitalWrite(3, false);
+                }
+            }
+            else
+                Toast.makeText(this, R.string.noConnectionHeating, Toast.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(this, R.string.unknownVoiceCommand, Toast.LENGTH_SHORT).show();
     }
 
     public void openWebpage(String url)
