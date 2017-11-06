@@ -688,7 +688,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, R.string.unknownVoiceCommand, Toast.LENGTH_SHORT).show();
     }
 
-    public void openWebpage(String url){}
+    public void openWebpage(String url){
         Intent page = new Intent(Intent.ACTION_VIEW);
         page.setData(Uri.parse(url));
         startActivity(page);

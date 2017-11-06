@@ -70,13 +70,13 @@ public class DbManager {
                         user.setLName((String) dataSnapshot.getValue());
                         break;
                     case PATIENT_LATITUDE_DB_TAG:
-                        user.setLat((Long) dataSnapshot.getValue());
+                        user.setLat((Double) dataSnapshot.getValue());
                         break;
                     case PATIENT_FIRST_NAME_DB_TAG:
                         user.setFName((String) dataSnapshot.getValue());
                         break;
                     case PATIENT_LONGITUDE_DB_TAG:
-                        user.setLong((Long) dataSnapshot.getValue());
+                        user.setLong((Double) dataSnapshot.getValue());
                         break;
                 }
             }
