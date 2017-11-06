@@ -34,6 +34,7 @@ import android.Manifest;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity
 
     //Database
     DbManager db;
+    UserProfile user;
 
     // connected to a OneSheeld?
     private boolean connected = false;
@@ -153,7 +155,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         OneSheeldSdk.init(this);
         OneSheeldSdk.setDebugging(true);
         manager = OneSheeldSdk.getManager();
@@ -188,7 +189,12 @@ public class MainActivity extends AppCompatActivity
             weatherReport();
 
         //Database
+        Intent loginInfo = getIntent();
+        String uID = loginInfo.getStringExtra("uID");
         db = new DbManager();
+        user = new UserProfile();
+        db.initUser(user, uID);
+
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
@@ -350,6 +356,10 @@ public class MainActivity extends AppCompatActivity
             take_out_view.setVisibility(View.GONE);
             shop_view.setVisibility(View.GONE);
             taxi_view.setVisibility(View.VISIBLE);
+
+        } else if (id == R.id.sign_out){
+            FirebaseAuth.getInstance().signOut();
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -364,6 +374,7 @@ public class MainActivity extends AppCompatActivity
         manager.cancelConnecting();
         manager.cancelScanning();
 
+        FirebaseAuth.getInstance().signOut();  //sign the user out
         super.onDestroy();
     }
 
@@ -395,7 +406,6 @@ public class MainActivity extends AppCompatActivity
 
         return granted;
     }
-
 
     public boolean checkLocationPermission() {
         boolean granted = false;
@@ -455,30 +465,29 @@ public class MainActivity extends AppCompatActivity
         taxi_view = (LinearLayout) findViewById(R.id.taxi_id);
 
         getGPS_button = (Button) findViewById(R.id.getCoords_button);
-        getGPS_button.setOnClickListener(new View.OnClickListener() {
-                                             @Override
-                                             public void onClick(View v) {
-                                                 Location l = null;
-                                                 l = locationServicesManager.getLastLocation();
+        getGPS_button.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Location l = null;
+                        l = locationServicesManager.getLastLocation();
+                        String message;
+                        if (l != null) {
+                            double lon = l.getLongitude();
+                            double lat = l.getLatitude();
 
-                                                 String message;
-                                                 if (l != null) {
-                                                     double lon = l.getLongitude();
-                                                     double lat = l.getLatitude();
+                            message = "Your location is: Lat: " + lat
+                                    + ", Lon: " + lon;
 
-                                                     message = "Your location is: Lat: " + lat
-                                                             + ", Lon: " + lon;
+                            Toast.makeText(getApplicationContext(),
+                                    message,
+                                    Toast.LENGTH_LONG).show();
 
-                                                     Toast.makeText(getApplicationContext(),
-                                                             message,
-                                                             Toast.LENGTH_LONG).show();
-
-                                                     db.setPatientCoordinates(lat, lon, "Tomas", "uniqueIDShouldGoHere");
-                                                 }
-                                             }
-                                         }
+                            db.setPatientCoordinates(lat, lon, user.getCARER_ID(), user.getuID());
+                        }
+                    }
+                }
         );
-
 
         scanButton = (Button) findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
@@ -533,8 +542,6 @@ public class MainActivity extends AppCompatActivity
         disconnectButton.setEnabled(false);
     }
 
-
-
     public void scan(){
         if (checkLocationPermission() && checkBlueTooth()) {
             manager.cancelScanning();
@@ -584,7 +591,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Showing google speech input dialog
-     * */
+     */
     private void promptSpeechInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -602,7 +609,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Receiving speech input
-     * */
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -636,8 +643,7 @@ public class MainActivity extends AppCompatActivity
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
             startActivityForResult(callIntent, 100);
             return;
-        }
-        else {
+        } else {
             Toast.makeText(this, R.string.call_permission_ungranted, Toast.LENGTH_LONG).show();
 
         }
@@ -682,8 +688,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, R.string.unknownVoiceCommand, Toast.LENGTH_SHORT).show();
     }
 
-    public void openWebpage(String url)
-    {
+    public void openWebpage(String url){}
         Intent page = new Intent(Intent.ACTION_VIEW);
         page.setData(Uri.parse(url));
         startActivity(page);
