@@ -44,4 +44,11 @@
     <string name="turningOffHeating">Turning off heating</string>
     <string name="noConnectionHeating">Heating requires connection to OneSheeld</string>
     <string name="unknownVoiceCommand">Command not recognised</string>
+    <string name="call_per">Permissions Required to make call.</string>
+    <string name="loc_req_blue">Location required to connect with bluetooth.</string>
+    <string name="enter_your_username">Please enter your Username:</string>
+    <string name="username">Username</string>
+    <string name="enter_your_password">Please enter your Password:</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
 </resources>
