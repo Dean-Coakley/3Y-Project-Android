@@ -33,6 +33,7 @@ import android.Manifest;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
@@ -150,7 +151,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         OneSheeldSdk.init(this);
         OneSheeldSdk.setDebugging(true);
         manager = OneSheeldSdk.getManager();
@@ -185,8 +185,12 @@ public class MainActivity extends AppCompatActivity
             weatherReport();
 
         //Database
+        Intent loginInfo = getIntent();
+        String uID = loginInfo.getStringExtra("uID");
         db = new DbManager();
         user = new UserProfile();
+        db.initUser(user, uID);
+
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
         btnSpeak = (Button) findViewById(R.id.btnSpeak);
@@ -346,6 +350,10 @@ public class MainActivity extends AppCompatActivity
             take_out_view.setVisibility(View.GONE);
             shop_view.setVisibility(View.GONE);
             taxi_view.setVisibility(View.VISIBLE);
+
+        } else if (id == R.id.sign_out){
+            FirebaseAuth.getInstance().signOut();
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -360,6 +368,7 @@ public class MainActivity extends AppCompatActivity
         manager.cancelConnecting();
         manager.cancelScanning();
 
+        FirebaseAuth.getInstance().signOut();  //sign the user out
         super.onDestroy();
     }
 
@@ -391,7 +400,6 @@ public class MainActivity extends AppCompatActivity
 
         return granted;
     }
-
 
     public boolean checkLocationPermission() {
         boolean granted = false;
@@ -469,7 +477,7 @@ public class MainActivity extends AppCompatActivity
                                     message,
                                     Toast.LENGTH_LONG).show();
 
-                            db.setPatientCoordinates(lat, lon, user.getCARER_NAME(), user.getUsername());
+                            db.setPatientCoordinates(lat, lon, user.getCARER_ID(), user.getuID());
                         }
                     }
                 }
@@ -529,7 +537,6 @@ public class MainActivity extends AppCompatActivity
         toggleLights.setEnabled(false);
         disconnectButton.setEnabled(false);
     }
-
 
     //start location services
     public boolean locationServicesInit() {

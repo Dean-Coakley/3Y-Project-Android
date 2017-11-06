@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:paddingTop="50dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -18,6 +20,7 @@
         android:hint="@string/username"/>
 
     <TextView
+        android:paddingTop="20dp"
         android:layout_width="wrap_content"
         android:id="@+id/user_pw"
         android:layout_height="wrap_content"
@@ -30,6 +33,14 @@
         android:id="@+id/pw_in"
         android:hint="@string/password"/>
 
+    <TextView
+        android:id="@+id/login_error_message"
+        android:paddingTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:text="@string/your_username_password_is_incorrect"
+        android:textColor="@color/text_red_error"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
