@@ -65,8 +65,6 @@ public class LocationServicesManager implements LocationListener {
                     Toast.LENGTH_LONG).show();
 
             initSuccess = false;
-
-
         }
         // if permissions are granted then...
         else {
