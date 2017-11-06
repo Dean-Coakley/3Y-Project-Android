@@ -35,4 +35,13 @@
     <string name="call_permission_ungranted">You did not give permissions to make calls</string>
     <string name="turn_on_bt">Turn on bluetooth to connect.</string>
     <string name="bt_support">Bluetooth is not supported on this device.</string>
+    <string name="acquiringWeather">Acquiring weather</string>
+    <string name="connectingOneSheeld">Connecting to OneSheeld</string>
+    <string name="turningOnLights">Turning on lights</string>
+    <string name="turningOffLights">Turning off lights</string>
+    <string name="noConnectionLights">Lights require connection to OneSheeld</string>
+    <string name="turningOnHeating">Turning on heating</string>
+    <string name="turningOffHeating">Turning off heating</string>
+    <string name="noConnectionHeating">Heating requires connection to OneSheeld</string>
+    <string name="unknownVoiceCommand">Command not recognised</string>
 </resources>
