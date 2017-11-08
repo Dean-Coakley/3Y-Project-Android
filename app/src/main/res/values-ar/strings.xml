@@ -42,5 +42,5 @@
     <string name="enter_your_password">ادخل رقمك السري:</string>
     <string name="password">كلمه السر</string>
     <string name="login">تسجيل الدخول</string>
-    <string name="fields">Fields cannot be empty</string>
+    <string name="fields">لا يمكن أن تكون هذه الحقول فارغة</string>
 </resources>

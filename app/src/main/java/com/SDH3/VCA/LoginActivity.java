@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void signIn(String uName, String password) {
-        if (!validateForm(uName, password)) return;
+        if (!validateForm()) return;
         userAuth.signInWithEmailAndPassword(uName, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
@@ -70,10 +70,10 @@ public class LoginActivity extends AppCompatActivity {
                 );
     }
 
-    private boolean validateForm(String un, String pw) {
-        boolean BBB = false;
-        if (un == null || pw == null) {
-            BBB = true;
+    private boolean validateForm() {
+        boolean BBB = true;
+        if (userNameInput.getText().toString().equals("")|| passwordInput.getText().toString().equals("")) {
+            BBB = false;
             Toast.makeText(LoginActivity.this, R.string.fields, Toast.LENGTH_LONG ).show();
         }
         return BBB;
