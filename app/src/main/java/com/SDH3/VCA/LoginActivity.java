@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -40,14 +41,16 @@ public class LoginActivity extends AppCompatActivity {
                 userName = userNameInput.getText().toString();
                 String password = "";
                 password = passwordInput.getText().toString();
+
                 signIn(userName, password);
+
             }
         });
     }
 
 
     private void signIn(String uName, String password) {
-        if (!validateForm()) return;
+        if (!validateForm(uName, password)) return;
         userAuth.signInWithEmailAndPassword(uName, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
@@ -67,15 +70,20 @@ public class LoginActivity extends AppCompatActivity {
                 );
     }
 
-    private boolean validateForm() {
-        return true;
+    private boolean validateForm(String un, String pw) {
+        boolean BBB = false;
+        if (un == null || pw == null) {
+            BBB = true;
+            Toast.makeText(LoginActivity.this, R.string.fields, Toast.LENGTH_LONG ).show();
+        }
+        return BBB;
     }
 
     private void resetForm(boolean showErrorMessage) {
         if (showErrorMessage) {
             TextView errorMessage = (TextView) findViewById(R.id.login_error_message);
             errorMessage.setVisibility(View.VISIBLE);
-            userNameInput.setText("");
+            //userNameInput.setText("");
             passwordInput.setText("");
         }
     }
