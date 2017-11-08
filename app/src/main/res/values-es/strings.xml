@@ -42,4 +42,5 @@
     <string name="enter_your_password">Introduzca su contraseña:</string>
     <string name="password">Contraseña</string>
     <string name="login">Iniciar sesión</string>
+    <string name="fields">Fields cannot be empty</string>
 </resources>
