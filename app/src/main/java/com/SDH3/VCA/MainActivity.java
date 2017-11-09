@@ -1,5 +1,6 @@
 package com.SDH3.VCA;
 
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -35,6 +36,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
@@ -104,6 +108,8 @@ public class MainActivity extends AppCompatActivity
     private final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
     private final int PERMISSION_REQUEST = 100;
 
+    private DatabaseReference firedb;
+
     private OneSheeldScanningCallback scanningCallback = new OneSheeldScanningCallback() {
         @Override
         public void onDeviceFind(OneSheeldDevice device) {
@@ -146,6 +152,7 @@ public class MainActivity extends AppCompatActivity
         }
 
     };
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -315,6 +322,7 @@ public class MainActivity extends AppCompatActivity
             taxi_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_weather) {
+            weatherReport();
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.VISIBLE);
             gps_view.setVisibility(View.GONE);
@@ -358,6 +366,9 @@ public class MainActivity extends AppCompatActivity
             taxi_view.setVisibility(View.VISIBLE);
 
         } else if (id == R.id.sign_out){
+            ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Logging out..");
+            pd.show();
             FirebaseAuth.getInstance().signOut();
             finish();
         }
@@ -374,7 +385,9 @@ public class MainActivity extends AppCompatActivity
         manager.cancelConnecting();
         manager.cancelScanning();
 
-        FirebaseAuth.getInstance().signOut();  //sign the user out
+        firedb = FirebaseDatabase.getInstance().getReference().child("patients_flattened");
+        firedb.keepSynced(true);
+        //FirebaseAuth.getInstance().signOut();  //sign the user out
         super.onDestroy();
     }
 
@@ -653,6 +666,12 @@ public class MainActivity extends AppCompatActivity
         if(command.contains("weather")){
             Toast.makeText(this, R.string.acquiringWeather, Toast.LENGTH_SHORT).show();
             weatherReport();
+            home_view.setVisibility(View.GONE);
+            weather_view.setVisibility(View.VISIBLE);
+            gps_view.setVisibility(View.GONE);
+            take_out_view.setVisibility(View.GONE);
+            shop_view.setVisibility(View.GONE);
+            taxi_view.setVisibility(View.GONE);
         }
         else if(command.contains("scan")){
             Toast.makeText(this, R.string.connectingOneSheeld, Toast.LENGTH_SHORT).show();
