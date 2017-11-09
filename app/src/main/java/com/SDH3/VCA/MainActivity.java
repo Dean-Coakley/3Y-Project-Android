@@ -1,5 +1,7 @@
 package com.SDH3.VCA;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -35,6 +37,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
@@ -146,6 +151,7 @@ public class MainActivity extends AppCompatActivity
         }
 
     };
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -316,6 +322,7 @@ public class MainActivity extends AppCompatActivity
             taxi_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_weather) {
+            weatherReport();
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.VISIBLE);
             gps_view.setVisibility(View.GONE);
@@ -359,6 +366,9 @@ public class MainActivity extends AppCompatActivity
             taxi_view.setVisibility(View.VISIBLE);
 
         } else if (id == R.id.sign_out){
+            ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Logging out..");
+            pd.show();
             FirebaseAuth.getInstance().signOut();
             finish();
         }
@@ -374,8 +384,6 @@ public class MainActivity extends AppCompatActivity
         manager.disconnectAll();
         manager.cancelConnecting();
         manager.cancelScanning();
-
-        FirebaseAuth.getInstance().signOut();  //sign the user out
         super.onDestroy();
     }
 
@@ -570,6 +578,7 @@ public class MainActivity extends AppCompatActivity
 
         Location l = locationServicesManager.getLastLocation();
         weatherFunction.placeIdTask asyncTask = new weatherFunction.placeIdTask(new weatherFunction.AsyncResponse() {
+            @SuppressLint("SetTextI18n")
             public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_updatedOn, String icon, String sun_rise) {
                 cityField.setText(weather_city);
                 updatedField.setText(weather_updatedOn);
@@ -621,6 +630,51 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, R.string.call_permission_ungranted, Toast.LENGTH_LONG).show();
 
         }
+    }
+
+    public void voiceCommand(String command){
+        if(command.contains("weather")){
+            Toast.makeText(this, R.string.acquiringWeather, Toast.LENGTH_SHORT).show();
+            weatherReport();
+            home_view.setVisibility(View.GONE);
+            weather_view.setVisibility(View.VISIBLE);
+            gps_view.setVisibility(View.GONE);
+            take_out_view.setVisibility(View.GONE);
+            shop_view.setVisibility(View.GONE);
+            taxi_view.setVisibility(View.GONE);
+        }
+        else if(command.contains("scan")){
+            Toast.makeText(this, R.string.connectingOneSheeld, Toast.LENGTH_SHORT).show();
+            scan();
+        }
+        else if(command.contains("lights")){
+            if(connectedToSheeld) {
+                if (command.contains("on")) {
+                    Toast.makeText(this, R.string.turningOnLights, Toast.LENGTH_SHORT).show();
+                    sheeldDevice.digitalWrite(4, true);
+                } else if (command.contains("off")) {
+                    Toast.makeText(this, R.string.turningOffLights, Toast.LENGTH_SHORT).show();
+                    sheeldDevice.digitalWrite(4, false);
+                }
+            }
+            else
+                Toast.makeText(this, R.string.noConnectionLights, Toast.LENGTH_SHORT).show();
+        }
+        else if(command.contains("heating")){
+            if(connectedToSheeld) {
+                if (command.contains("on")) {
+                    Toast.makeText(this, R.string.turningOnHeating, Toast.LENGTH_SHORT).show();
+                    sheeldDevice.digitalWrite(3, true);
+                } else if (command.contains("off")) {
+                    Toast.makeText(this, R.string.turningOffHeating, Toast.LENGTH_SHORT).show();
+                    sheeldDevice.digitalWrite(3, false);
+                }
+            }
+            else
+                Toast.makeText(this, R.string.noConnectionHeating, Toast.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(this, R.string.unknownVoiceCommand, Toast.LENGTH_SHORT).show();
     }
 
     public void openWebpage(String url){

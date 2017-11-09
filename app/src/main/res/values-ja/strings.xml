@@ -42,4 +42,5 @@
     <string name="enter_your_password">パスワードを入力してください:</string>
     <string name="password">パスワード</string>
     <string name="login">ログイン</string>
+    <string name="fields">これらのフィールドは空にすることはできません</string>
 </resources>
