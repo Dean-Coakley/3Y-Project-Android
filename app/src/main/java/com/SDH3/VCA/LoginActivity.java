@@ -1,5 +1,6 @@
 package com.SDH3.VCA;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +22,9 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth userAuth;
     private EditText userNameInput;
     private EditText passwordInput;
+    private ProgressDialog pd;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
 
         userAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = userAuth.getCurrentUser();
+
+        pd = new ProgressDialog(this);
 
         userNameInput = (EditText) findViewById(R.id.user_in);
         passwordInput = (EditText) findViewById(R.id.pw_in);
@@ -50,12 +56,16 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void signIn(String uName, String password) {
+
+
         if (!validateForm()) return;
         userAuth.signInWithEmailAndPassword(uName, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    pd.setMessage("Logging in..");
+                                    pd.show();
                                     FirebaseUser user = userAuth.getCurrentUser();
                                     Intent startApp = new Intent(getApplicationContext(), MainActivity.class);
                                     startApp.putExtra("username", user.getDisplayName());
