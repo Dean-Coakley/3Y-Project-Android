@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity
     private final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
     private final int PERMISSION_REQUEST = 100;
 
-    private DatabaseReference firedb;
 
     private OneSheeldScanningCallback scanningCallback = new OneSheeldScanningCallback() {
         @Override
@@ -385,9 +384,7 @@ public class MainActivity extends AppCompatActivity
         manager.cancelConnecting();
         manager.cancelScanning();
 
-        firedb = FirebaseDatabase.getInstance().getReference().child("patients_flattened");
-        firedb.keepSynced(true);
-        //FirebaseAuth.getInstance().signOut();  //sign the user out
+        FirebaseAuth.getInstance().signOut();  //sign the user out
         super.onDestroy();
     }
 

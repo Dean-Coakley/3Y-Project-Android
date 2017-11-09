@@ -64,8 +64,6 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    pd.setMessage("Logging in..");
-                                    pd.show();
                                     FirebaseUser user = userAuth.getCurrentUser();
                                     Intent startApp = new Intent(getApplicationContext(), MainActivity.class);
                                     startApp.putExtra("username", user.getDisplayName());
@@ -74,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(startApp);
                                 } else {
                                     resetForm(true);
+                                    pd.hide();
                                 }
                             }
                         }
@@ -86,6 +85,11 @@ public class LoginActivity extends AppCompatActivity {
             BBB = false;
             Toast.makeText(LoginActivity.this, R.string.fields, Toast.LENGTH_LONG ).show();
         }
+        else
+        {
+            pd.setMessage("Logging in..");
+            pd.show();
+        }
         return BBB;
     }
 
@@ -96,6 +100,12 @@ public class LoginActivity extends AppCompatActivity {
             //userNameInput.setText("");
             passwordInput.setText("");
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        pd.hide();
     }
 
 }
