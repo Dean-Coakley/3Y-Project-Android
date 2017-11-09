@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,9 +32,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        userAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = userAuth.getCurrentUser();
-
         pd = new ProgressDialog(this);
 
         userNameInput = (EditText) findViewById(R.id.user_in);
@@ -47,16 +45,21 @@ public class LoginActivity extends AppCompatActivity {
                 userName = userNameInput.getText().toString();
                 String password = "";
                 password = passwordInput.getText().toString();
-
                 signIn(userName, password);
-
             }
         });
+
+
+        userAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = userAuth.getCurrentUser();
+        if (user != null){
+            Log.i(getPackageName(), "User already logged in. Opening MainActivity.");
+            openMainActivity(userAuth.getCurrentUser());
+        }
     }
 
 
     private void signIn(String uName, String password) {
-
 
         if (!validateForm()) return;
         userAuth.signInWithEmailAndPassword(uName, password)
@@ -65,11 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     FirebaseUser user = userAuth.getCurrentUser();
-                                    Intent startApp = new Intent(getApplicationContext(), MainActivity.class);
-                                    startApp.putExtra("username", user.getDisplayName());
-                                    startApp.putExtra("email", user.getEmail());
-                                    startApp.putExtra("uID", user.getUid());
-                                    startActivity(startApp);
+                                    openMainActivity(user);
                                 } else {
                                     resetForm(true);
                                     pd.hide();
@@ -102,6 +101,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public void openMainActivity(FirebaseUser user){
+        Intent startApp = new Intent(getApplicationContext(), MainActivity.class);
+        startApp.putExtra("username", user.getDisplayName());
+        startApp.putExtra("email", user.getEmail());
+        startApp.putExtra("uID", user.getUid());
+        startActivity(startApp);
+    }
+  
     @Override
     public void onPause() {
         super.onPause();
