@@ -383,7 +383,6 @@ public class MainActivity extends AppCompatActivity
         manager.disconnectAll();
         manager.cancelConnecting();
         manager.cancelScanning();
-
         super.onDestroy();
     }
 
