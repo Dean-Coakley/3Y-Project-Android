@@ -1,5 +1,6 @@
 package com.SDH3.VCA;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
@@ -107,8 +108,6 @@ public class MainActivity extends AppCompatActivity
     // Call Permission final variables
     private final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
     private final int PERMISSION_REQUEST = 100;
-
-    private DatabaseReference firedb;
 
     private OneSheeldScanningCallback scanningCallback = new OneSheeldScanningCallback() {
         @Override
@@ -385,9 +384,6 @@ public class MainActivity extends AppCompatActivity
         manager.cancelConnecting();
         manager.cancelScanning();
 
-        firedb = FirebaseDatabase.getInstance().getReference().child("patients_flattened");
-        firedb.keepSynced(true);
-        //FirebaseAuth.getInstance().signOut();  //sign the user out
         super.onDestroy();
     }
 
@@ -582,6 +578,7 @@ public class MainActivity extends AppCompatActivity
 
         Location l = locationServicesManager.getLastLocation();
         weatherFunction.placeIdTask asyncTask = new weatherFunction.placeIdTask(new weatherFunction.AsyncResponse() {
+            @SuppressLint("SetTextI18n")
             public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_updatedOn, String icon, String sun_rise) {
                 cityField.setText(weather_city);
                 updatedField.setText(weather_updatedOn);
