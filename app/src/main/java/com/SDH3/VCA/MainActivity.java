@@ -84,10 +84,10 @@ public class MainActivity extends AppCompatActivity
     private OneSheeldDevice sheeldDevice;
 
     //Speech recognition
-    private TextView txtSpeechInput;
+    private TextView speechText;
     private ImageButton btnSpeak;
     private boolean connectedToSheeld;
-
+    private VoiceManager voiceManager;
     private final int MY_PERMISSIONS_REQUEST_LOCATION = 123456789;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
@@ -196,14 +196,14 @@ public class MainActivity extends AppCompatActivity
         db.initUser(user, uID);
 
 
-        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        speechText = (TextView) findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                promptSpeechInput();
+                voiceManager.promptSpeechInput();
             }
         });
 
@@ -252,6 +252,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        voiceManager = new VoiceManager(this, this, REQ_CODE_SPEECH_INPUT);
         connectedToSheeld = false;
     }
 
@@ -589,40 +590,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * Showing google speech input dialog
-     */
-    private void promptSpeechInput() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, R.string.speech_prompt);
-        try {
-            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-        } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.speech_not_supported),
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * Receiving speech input
-     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
-                if (resultCode == RESULT_OK && null != data) {
-
-                    ArrayList<String> result = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    txtSpeechInput.setText(result.get(0));
-                    voiceCommand(result.get(0));
-                }
+                voiceManager.processResult(resultCode, data);
                 break;
             }
         }
@@ -649,48 +623,21 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void voiceCommand(String command){
-        if(command.contains("weather")){
-            Toast.makeText(this, R.string.acquiringWeather, Toast.LENGTH_SHORT).show();
-            weatherReport();
-        }
-        else if(command.contains("scan")){
-            Toast.makeText(this, R.string.connectingOneSheeld, Toast.LENGTH_SHORT).show();
-            scan();
-        }
-        else if(command.contains("lights")){
-            if(connectedToSheeld) {
-                if (command.contains("on")) {
-                    Toast.makeText(this, R.string.turningOnLights, Toast.LENGTH_SHORT).show();
-                    sheeldDevice.digitalWrite(4, true);
-                } else if (command.contains("off")) {
-                    Toast.makeText(this, R.string.turningOffLights, Toast.LENGTH_SHORT).show();
-                    sheeldDevice.digitalWrite(4, false);
-                }
-            }
-            else
-                Toast.makeText(this, R.string.noConnectionLights, Toast.LENGTH_SHORT).show();
-        }
-        else if(command.contains("heating")){
-            if(connectedToSheeld) {
-                if (command.contains("on")) {
-                    Toast.makeText(this, R.string.turningOnHeating, Toast.LENGTH_SHORT).show();
-                    sheeldDevice.digitalWrite(3, true);
-                } else if (command.contains("off")) {
-                    Toast.makeText(this, R.string.turningOffHeating, Toast.LENGTH_SHORT).show();
-                    sheeldDevice.digitalWrite(3, false);
-                }
-            }
-            else
-                Toast.makeText(this, R.string.noConnectionHeating, Toast.LENGTH_SHORT).show();
-        }
-        else
-            Toast.makeText(this, R.string.unknownVoiceCommand, Toast.LENGTH_SHORT).show();
-    }
-
     public void openWebpage(String url){
         Intent page = new Intent(Intent.ACTION_VIEW);
         page.setData(Uri.parse(url));
         startActivity(page);
+    }
+
+    public OneSheeldDevice getSheeld(){
+        return sheeldDevice;
+    }
+
+    public void setSpeechText(String str){
+        speechText.setText(str);
+    }
+
+    public boolean getConnectedToSheeld(){
+        return connectedToSheeld;
     }
 }
