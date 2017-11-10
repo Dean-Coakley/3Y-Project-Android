@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.Manifest;
 import android.widget.TextView;
@@ -46,6 +47,7 @@ import com.integreight.onesheeld.sdk.OneSheeldManager;
 import com.integreight.onesheeld.sdk.OneSheeldScanningCallback;
 import com.integreight.onesheeld.sdk.OneSheeldSdk;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -53,13 +55,14 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    // package name
+    public static String PACKAGE_NAME;
+
     //Layout references
     LinearLayout home_view;
     LinearLayout gps_view;
     LinearLayout weather_view;
-    LinearLayout take_out_view;
-    LinearLayout shop_view;
-    LinearLayout taxi_view;
+    LinearLayout business_list_view;
 
     //Location
     LocationServicesManager locationServicesManager;
@@ -83,7 +86,6 @@ public class MainActivity extends AppCompatActivity
     private Button disconnectButton;
     private Button getGPS_button;
 
-
     //Sheeld
     private OneSheeldManager manager;
     private OneSheeldDevice sheeldDevice;
@@ -95,15 +97,6 @@ public class MainActivity extends AppCompatActivity
     private VoiceManager voiceManager;
     private final int MY_PERMISSIONS_REQUEST_LOCATION = 123456789;
     private final int REQ_CODE_SPEECH_INPUT = 100;
-
-    //Call Buttons
-    private Button dinosButton;
-    private Button dominosButton;
-    private Button satelliteTaxis;
-
-    //WebPageButtons
-    private Button dinosWeb;
-    private Button tescoWeb;
 
     // Call Permission final variables
     private final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -158,6 +151,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PACKAGE_NAME = getPackageName();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -213,51 +207,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        dinosButton = (Button) findViewById(R.id.takeoutbutton);
-        dinosButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                callNumberButtonOnClick("0210000001");
-            }
-        });
-
-        dominosButton = (Button) findViewById(R.id.takeoutbutton2);
-        dominosButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                callNumberButtonOnClick("0210000001");
-            }
-        });
-
-        dinosWeb = (Button) findViewById(R.id.takeoutwebsite);
-        dinosWeb.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                openWebpage("https://www.facebook.com/DinosChips/");
-            }
-        });
-
-        tescoWeb = (Button) findViewById(R.id.tescowebsite);
-        tescoWeb.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                openWebpage("https://www.tesco.ie/groceries/?sc_cmp=ppc*sl*me*bg*px_-_campaign_not_set*tesco&gclid=Cj0KCQjwybvPBRDBARIsAA7T2kgn0Oge1-twtyQZS0nFKXm7cTDPaC6jRLrfEzn0krrZmH4LojkxkOMaAoW8EALw_wcB");
-            }
-        });
-
-        satelliteTaxis = (Button) findViewById(R.id.satNum);
-        satelliteTaxis.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                callNumberButtonOnClick("0210000001");
-            }
-        });
-
         voiceManager = new VoiceManager(this, this, REQ_CODE_SPEECH_INPUT);
         connectedToSheeld = false;
     }
@@ -279,6 +228,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            FirebaseAuth.getInstance().signOut();
             super.onBackPressed();
         }
     }
@@ -296,12 +246,10 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -317,26 +265,20 @@ public class MainActivity extends AppCompatActivity
             home_view.setVisibility(View.VISIBLE);
             weather_view.setVisibility(View.GONE);
             gps_view.setVisibility(View.GONE);
-            take_out_view.setVisibility(View.GONE);
-            shop_view.setVisibility(View.GONE);
-            taxi_view.setVisibility(View.GONE);
+            business_list_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_weather) {
             weatherReport();
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.VISIBLE);
             gps_view.setVisibility(View.GONE);
-            take_out_view.setVisibility(View.GONE);
-            shop_view.setVisibility(View.GONE);
-            taxi_view.setVisibility(View.GONE);
+            business_list_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_gps) {
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.GONE);
             gps_view.setVisibility(View.VISIBLE);
-            take_out_view.setVisibility(View.GONE);
-            shop_view.setVisibility(View.GONE);
-            taxi_view.setVisibility(View.GONE);
+            business_list_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_game) {
 
@@ -345,27 +287,26 @@ public class MainActivity extends AppCompatActivity
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.GONE);
             gps_view.setVisibility(View.GONE);
-            take_out_view.setVisibility(View.VISIBLE);
-            shop_view.setVisibility(View.GONE);
-            taxi_view.setVisibility(View.GONE);
+
+            //prepare the businesses layout
+            showBusinesses(DbManager.RESTAURANTS_DB_TAG);
+            business_list_view.setVisibility(View.VISIBLE);
 
         } else if (id == R.id.nav_shop) {
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.GONE);
             gps_view.setVisibility(View.GONE);
-            take_out_view.setVisibility(View.GONE);
-            shop_view.setVisibility(View.VISIBLE);
-            taxi_view.setVisibility(View.GONE);
+            showBusinesses(DbManager.SHOPPING_DB_TAG);
+            business_list_view.setVisibility(View.VISIBLE);
 
         } else if (id == R.id.nav_taxi) {
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.GONE);
             gps_view.setVisibility(View.GONE);
-            take_out_view.setVisibility(View.GONE);
-            shop_view.setVisibility(View.GONE);
-            taxi_view.setVisibility(View.VISIBLE);
+            showBusinesses(DbManager.TAXIS_DB_TAG);
+            business_list_view.setVisibility(View.VISIBLE);
 
-        } else if (id == R.id.sign_out){
+        } else if (id == R.id.sign_out) {
             ProgressDialog pd = new ProgressDialog(this);
             pd.setMessage("Logging out..");
             pd.show();
@@ -469,9 +410,7 @@ public class MainActivity extends AppCompatActivity
         gps_view = (LinearLayout) findViewById(R.id.gps_include_tag);
         home_view = (LinearLayout) findViewById(R.id.home_layout);
         weather_view = (LinearLayout) findViewById(R.id.weather_id);
-        take_out_view = (LinearLayout) findViewById(R.id.takeoutid);
-        shop_view = (LinearLayout) findViewById(R.id.shop_id);
-        taxi_view = (LinearLayout) findViewById(R.id.taxi_id);
+        business_list_view = (LinearLayout) findViewById(R.id.business_list_layout);
 
         getGPS_button = (Button) findViewById(R.id.getCoords_button);
         getGPS_button.setOnClickListener(
@@ -485,8 +424,8 @@ public class MainActivity extends AppCompatActivity
                             double lon = l.getLongitude();
                             double lat = l.getLatitude();
 
-                            message = "Your location is: Lat: " + lat
-                                    + ", Lon: " + lon;
+                            message = getString(R.string.your_location_is_lat) + lat
+                                    + getString(R.string.comma_lon) + lon;
 
                             Toast.makeText(getApplicationContext(),
                                     message,
@@ -506,7 +445,6 @@ public class MainActivity extends AppCompatActivity
                 scan();
             }
         });
-
 
 
         //disconnects all devices
@@ -551,7 +489,38 @@ public class MainActivity extends AppCompatActivity
         disconnectButton.setEnabled(false);
     }
 
-    public void scan(){
+    public void showBusinesses(final String businessType) {
+        ArrayList<Business> businesses = null;
+        TextView layoutTitle = (TextView) findViewById(R.id.business_layout_header);
+
+        switch (businessType) {
+            // set the title of the list layout depending on the type of business shown
+            case DbManager.SHOPPING_DB_TAG:
+                layoutTitle.setText(getString(R.string.shopping));
+
+                // get arraylist of all businesses of the specified type
+                businesses = db.getBusinesses(user.getuID(), DbManager.SHOPPING_DB_TAG);
+                break;
+
+            case DbManager.TAXIS_DB_TAG:
+                layoutTitle.setText(getString(R.string.taxi));
+                businesses = db.getBusinesses(user.getuID(), DbManager.TAXIS_DB_TAG);
+                break;
+
+            case DbManager.RESTAURANTS_DB_TAG:
+                layoutTitle.setText(getString(R.string.take_out));
+                businesses = db.getBusinesses(user.getuID(), DbManager.RESTAURANTS_DB_TAG);
+                break;
+        }
+
+        // get reference to the listView where businesses will be listed
+        ListView listContainer = (ListView) findViewById(R.id.business_list_element_container);
+        // initialise custom arrayAdapter for mapping businesses to a layout, and pass it to the listview
+        BusinessAdapter adapter = new BusinessAdapter(this, businesses, this);
+        listContainer.setAdapter(adapter);
+    }
+
+    public void scan() {
         if (checkLocationPermission() && checkBlueTooth()) {
             manager.cancelScanning();
             manager.cancelConnecting();
@@ -628,27 +597,22 @@ public class MainActivity extends AppCompatActivity
             return;
         } else {
             Toast.makeText(this, R.string.call_permission_ungranted, Toast.LENGTH_LONG).show();
-
         }
     }
 
-    public void voiceCommand(String command){
-        if(command.contains("weather")){
+    public void voiceCommand(String command) {
+        if (command.contains("weather")) {
             Toast.makeText(this, R.string.acquiringWeather, Toast.LENGTH_SHORT).show();
             weatherReport();
             home_view.setVisibility(View.GONE);
             weather_view.setVisibility(View.VISIBLE);
             gps_view.setVisibility(View.GONE);
-            take_out_view.setVisibility(View.GONE);
-            shop_view.setVisibility(View.GONE);
-            taxi_view.setVisibility(View.GONE);
-        }
-        else if(command.contains("scan")){
+            business_list_view.setVisibility(View.GONE);
+        } else if (command.contains("scan")) {
             Toast.makeText(this, R.string.connectingOneSheeld, Toast.LENGTH_SHORT).show();
             scan();
-        }
-        else if(command.contains("lights")){
-            if(connectedToSheeld) {
+        } else if (command.contains("lights")) {
+            if (connectedToSheeld) {
                 if (command.contains("on")) {
                     Toast.makeText(this, R.string.turningOnLights, Toast.LENGTH_SHORT).show();
                     sheeldDevice.digitalWrite(4, true);
@@ -656,12 +620,10 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(this, R.string.turningOffLights, Toast.LENGTH_SHORT).show();
                     sheeldDevice.digitalWrite(4, false);
                 }
-            }
-            else
+            } else
                 Toast.makeText(this, R.string.noConnectionLights, Toast.LENGTH_SHORT).show();
-        }
-        else if(command.contains("heating")){
-            if(connectedToSheeld) {
+        } else if (command.contains("heating")) {
+            if (connectedToSheeld) {
                 if (command.contains("on")) {
                     Toast.makeText(this, R.string.turningOnHeating, Toast.LENGTH_SHORT).show();
                     sheeldDevice.digitalWrite(3, true);
@@ -669,29 +631,27 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(this, R.string.turningOffHeating, Toast.LENGTH_SHORT).show();
                     sheeldDevice.digitalWrite(3, false);
                 }
-            }
-            else
+            } else
                 Toast.makeText(this, R.string.noConnectionHeating, Toast.LENGTH_SHORT).show();
-        }
-        else
+        } else
             Toast.makeText(this, R.string.unknownVoiceCommand, Toast.LENGTH_SHORT).show();
     }
 
-    public void openWebpage(String url){
+    public void openWebpage(String url) {
         Intent page = new Intent(Intent.ACTION_VIEW);
         page.setData(Uri.parse(url));
         startActivity(page);
     }
 
-    public OneSheeldDevice getSheeld(){
+    public OneSheeldDevice getSheeld() {
         return sheeldDevice;
     }
 
-    public void setSpeechText(String str){
+    public void setSpeechText(String str) {
         speechText.setText(str);
     }
 
-    public boolean getConnectedToSheeld(){
+    public boolean getConnectedToSheeld() {
         return connectedToSheeld;
     }
 }
