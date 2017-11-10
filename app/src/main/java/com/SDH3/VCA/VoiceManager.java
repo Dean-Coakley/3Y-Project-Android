@@ -55,7 +55,7 @@ public class VoiceManager {
     public void voiceCommand(String command){
         if(command.contains("weather")){
             Toast.makeText(activity, R.string.acquiringWeather, Toast.LENGTH_SHORT).show();
-            main.weatherReport();
+            main.switchWeatherScene();
         }
         else if(command.contains("scan")){
             Toast.makeText(activity, R.string.connectingOneSheeld, Toast.LENGTH_SHORT).show();
