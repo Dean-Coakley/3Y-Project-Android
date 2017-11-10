@@ -322,13 +322,7 @@ public class MainActivity extends AppCompatActivity
             taxi_view.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_weather) {
-            weatherReport();
-            home_view.setVisibility(View.GONE);
-            weather_view.setVisibility(View.VISIBLE);
-            gps_view.setVisibility(View.GONE);
-            take_out_view.setVisibility(View.GONE);
-            shop_view.setVisibility(View.GONE);
-            taxi_view.setVisibility(View.GONE);
+           switchWeatherScene();
 
         } else if (id == R.id.nav_gps) {
             home_view.setVisibility(View.GONE);
@@ -630,6 +624,17 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, R.string.call_permission_ungranted, Toast.LENGTH_LONG).show();
 
         }
+    }
+
+    public void switchWeatherScene()
+    {
+        weatherReport();
+        home_view.setVisibility(View.GONE);
+        weather_view.setVisibility(View.VISIBLE);
+        gps_view.setVisibility(View.GONE);
+        take_out_view.setVisibility(View.GONE);
+        shop_view.setVisibility(View.GONE);
+        taxi_view.setVisibility(View.GONE);
     }
 
     public void voiceCommand(String command){
