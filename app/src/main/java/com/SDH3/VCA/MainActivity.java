@@ -601,9 +601,7 @@ public void switchWeatherScene(){
         home_view.setVisibility(View.GONE);
         weather_view.setVisibility(View.VISIBLE);
         gps_view.setVisibility(View.GONE);
-        take_out_view.setVisibility(View.GONE);
-        shop_view.setVisibility(View.GONE);
-        taxi_view.setVisibility(View.GONE);
+        business_list_view.setVisibility(View.GONE);
     }
     
     public void openWebpage(String url){
