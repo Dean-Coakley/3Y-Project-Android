@@ -69,4 +69,6 @@
     <string name="settings">Settings</string>
     <string name="sign_out">Sign Out</string>
     <string name="fields">Fields cannot be empty</string>
+    <string name="your_location_is_lat">Your location is: Lat:</string>
+    <string name="comma_lon">, Lon:</string>
 </resources>

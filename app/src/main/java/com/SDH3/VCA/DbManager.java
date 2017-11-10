@@ -1,10 +1,15 @@
 package com.SDH3.VCA;
 
+import android.util.Log;
+import android.widget.ArrayAdapter;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 /**
  * Created by Alex on 15/10/2017.
@@ -15,7 +20,8 @@ public class DbManager {
     // DB tags (other than user-specific ones) are likely to change as the project
     // develops. When using the db, be sure not to hardcode the tags (such as "Patients")
     // into the request. Instead, reference these Strings.
-    // This will make it easier to accommodate db changes.     ~Alex
+    // This will make it easier to accommodate db changes, avoid typos, and will allow query-writing
+    // without switching between code and browser to check tags   ~Alex
     static final String PATIENT_LONGITUDE_DB_TAG = "long";
     static final String PATIENT_LATITUDE_DB_TAG = "lat";
     static final String PATIENT_AGE_DB_TAG = "age";
@@ -27,12 +33,26 @@ public class DbManager {
     static final String PATIENTS_DB_TAG = "Patients";
     static final String PATIENTS_FLATTENED_DB_TAG = "patients_flattened";
 
+    // business-related tags
+    static final String BUSINESSES_DB_TAG = "businesses";
+    static final String RESTAURANTS_DB_TAG = "restaurants";
+    static final String SHOPPING_DB_TAG = "shopping";
+    static final String TAXIS_DB_TAG = "taxis";
+    static final String BUSINESS_NAME_DB_TAG = "business_name";
+    static final String PHONE_NUMBER_DB_TAG = "phone_number";
+    static final String WEBSITE_DB_TAG = "website";
+
     private DatabaseReference firebaseDB;
+
+    // lists of businesses
+    private ArrayList<Business> restaurants;
+    private ArrayList<Business> taxis;
+    private ArrayList<Business> shopping;
+
 
     public DbManager() {
         firebaseDB = FirebaseDatabase.getInstance().getReference();
     }
-
 
     public UserProfile initUser(final UserProfile user, String uID) {
         // fill the user object with all the relevant data, starting with the uID
@@ -118,6 +138,7 @@ public class DbManager {
                         The fair Ophelia! Nymph, in thy orisons
                 Be all my sins remember’d. */
             }
+
         };
 
         // attach the above listener to all database attributes that we want to keep track of.
@@ -130,6 +151,11 @@ public class DbManager {
         userDBReference.child(PATIENT_LATITUDE_DB_TAG).addListenerForSingleValueEvent(userDataListener);
         userDBReference.child(PATIENT_LONGITUDE_DB_TAG).addListenerForSingleValueEvent(userDataListener);
         userDBReference.child(PATIENT_CARER_ID_DB_TAG).addListenerForSingleValueEvent(userDataListener);
+
+        // cache lists of businesses that are available to the patient
+        getBusinesses(uID, TAXIS_DB_TAG);
+        getBusinesses(uID, RESTAURANTS_DB_TAG);
+        getBusinesses(uID, SHOPPING_DB_TAG);
 
         return user;
     }
@@ -151,5 +177,63 @@ public class DbManager {
         } else return false;
     }
 
+    public ArrayList<Business> getBusinesses(String uID, final String businessType){
+        // this method takes a user's uID, to accommodate the possibility of tailoring search-results in the future
+        // businessType should be one of the static strings listed above. This will get plugged into the query.
 
+
+        // if the lists of available businesses haven't been cached, get them
+        if (this.restaurants == null || this.taxis == null || this.shopping == null) {
+            final ArrayList<Business> businesses = new ArrayList<>();
+            DatabaseReference restaurantsReference = firebaseDB.child(BUSINESSES_DB_TAG).child(businessType);
+            restaurantsReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot entry : dataSnapshot.getChildren()) {
+                        Business business = new Business();
+                        business.setName((String) entry.child(BUSINESS_NAME_DB_TAG).getValue());
+                        business.setPhoneNumber((String) entry.child(PHONE_NUMBER_DB_TAG).getValue());
+                        business.setWebsite((String) entry.child(WEBSITE_DB_TAG).getValue());
+                        business.setType(businessType);
+                        businesses.add(business);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(MainActivity.PACKAGE_NAME,
+                            databaseError.getMessage() + "\n" + databaseError.getDetails());
+                }
+            });
+
+            switch (businessType) {
+                case TAXIS_DB_TAG:
+                    this.taxis = businesses;
+                    break;
+                case SHOPPING_DB_TAG:
+                    this.shopping = businesses;
+                    break;
+                case RESTAURANTS_DB_TAG:
+                    this.restaurants = businesses;
+                    break;
+            }
+
+            return businesses;
+        }
+        else{ // if the lists have been cached, return them instantly without contacting the DB
+            ArrayList<Business> businesses = null;
+            switch (businessType) {
+                case TAXIS_DB_TAG:
+                    businesses = this.taxis;
+                    break;
+                case SHOPPING_DB_TAG:
+                    businesses = this.shopping;
+                    break;
+                case RESTAURANTS_DB_TAG:
+                    businesses = this.restaurants;
+                    break;
+            }
+            return businesses;
+        }
+    }
 }
