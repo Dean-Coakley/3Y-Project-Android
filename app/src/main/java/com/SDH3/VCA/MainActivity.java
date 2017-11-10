@@ -636,52 +636,7 @@ public class MainActivity extends AppCompatActivity
         shop_view.setVisibility(View.GONE);
         taxi_view.setVisibility(View.GONE);
     }
-
-    public void voiceCommand(String command){
-        if(command.contains("weather")){
-            Toast.makeText(this, R.string.acquiringWeather, Toast.LENGTH_SHORT).show();
-            weatherReport();
-            home_view.setVisibility(View.GONE);
-            weather_view.setVisibility(View.VISIBLE);
-            gps_view.setVisibility(View.GONE);
-            take_out_view.setVisibility(View.GONE);
-            shop_view.setVisibility(View.GONE);
-            taxi_view.setVisibility(View.GONE);
-        }
-        else if(command.contains("scan")){
-            Toast.makeText(this, R.string.connectingOneSheeld, Toast.LENGTH_SHORT).show();
-            scan();
-        }
-        else if(command.contains("lights")){
-            if(connectedToSheeld) {
-                if (command.contains("on")) {
-                    Toast.makeText(this, R.string.turningOnLights, Toast.LENGTH_SHORT).show();
-                    sheeldDevice.digitalWrite(4, true);
-                } else if (command.contains("off")) {
-                    Toast.makeText(this, R.string.turningOffLights, Toast.LENGTH_SHORT).show();
-                    sheeldDevice.digitalWrite(4, false);
-                }
-            }
-            else
-                Toast.makeText(this, R.string.noConnectionLights, Toast.LENGTH_SHORT).show();
-        }
-        else if(command.contains("heating")){
-            if(connectedToSheeld) {
-                if (command.contains("on")) {
-                    Toast.makeText(this, R.string.turningOnHeating, Toast.LENGTH_SHORT).show();
-                    sheeldDevice.digitalWrite(3, true);
-                } else if (command.contains("off")) {
-                    Toast.makeText(this, R.string.turningOffHeating, Toast.LENGTH_SHORT).show();
-                    sheeldDevice.digitalWrite(3, false);
-                }
-            }
-            else
-                Toast.makeText(this, R.string.noConnectionHeating, Toast.LENGTH_SHORT).show();
-        }
-        else
-            Toast.makeText(this, R.string.unknownVoiceCommand, Toast.LENGTH_SHORT).show();
-    }
-
+    
     public void openWebpage(String url){
         Intent page = new Intent(Intent.ACTION_VIEW);
         page.setData(Uri.parse(url));
