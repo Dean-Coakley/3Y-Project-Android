@@ -261,44 +261,27 @@ public class MainActivity extends AppCompatActivity
         // and make the requested layout 'VISIBLE'
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
+        home_view.setVisibility(View.GONE);
+        weather_view.setVisibility(View.GONE);
+        gps_view.setVisibility(View.GONE);
+        business_list_view.setVisibility(View.GONE);
+
+        if (id == R.id.nav_home)
             home_view.setVisibility(View.VISIBLE);
-            weather_view.setVisibility(View.GONE);
-            gps_view.setVisibility(View.GONE);
-            business_list_view.setVisibility(View.GONE);
-
-        } else if (id == R.id.nav_weather) {
+        else if (id == R.id.nav_weather)
            switchWeatherScene();
-           
-        } else if (id == R.id.nav_gps) {
-            home_view.setVisibility(View.GONE);
-            weather_view.setVisibility(View.GONE);
+        else if (id == R.id.nav_gps)
             gps_view.setVisibility(View.VISIBLE);
-            business_list_view.setVisibility(View.GONE);
-
-        } else if (id == R.id.nav_game) {
-
+        else if (id == R.id.nav_game) {
 
         } else if (id == R.id.nav_to) {
-            home_view.setVisibility(View.GONE);
-            weather_view.setVisibility(View.GONE);
-            gps_view.setVisibility(View.GONE);
-
             //prepare the businesses layout
             showBusinesses(DbManager.RESTAURANTS_DB_TAG);
             business_list_view.setVisibility(View.VISIBLE);
-
         } else if (id == R.id.nav_shop) {
-            home_view.setVisibility(View.GONE);
-            weather_view.setVisibility(View.GONE);
-            gps_view.setVisibility(View.GONE);
             showBusinesses(DbManager.SHOPPING_DB_TAG);
             business_list_view.setVisibility(View.VISIBLE);
-
         } else if (id == R.id.nav_taxi) {
-            home_view.setVisibility(View.GONE);
-            weather_view.setVisibility(View.GONE);
-            gps_view.setVisibility(View.GONE);
             showBusinesses(DbManager.TAXIS_DB_TAG);
             business_list_view.setVisibility(View.VISIBLE);
 
