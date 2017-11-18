@@ -30,6 +30,10 @@
                 android:id="@+id/business_list_layout"
                 android:visibility="gone"/>
 
+            <include layout="@layout/media_player_layout"
+                android:id="@+id/music_layout"
+                android:visibility="gone"/>
+
             <!--Main Layout-->
             <LinearLayout
                 android:layout_width="match_parent"
