@@ -1,9 +1,9 @@
 package com.SDH3.VCA;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,9 +12,9 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Html;
@@ -36,20 +36,13 @@ import android.widget.Switch;
 import android.Manifest;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
 import com.integreight.onesheeld.sdk.OneSheeldScanningCallback;
 import com.integreight.onesheeld.sdk.OneSheeldSdk;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity
@@ -410,7 +403,16 @@ public class MainActivity extends AppCompatActivity
                                     message,
                                     Toast.LENGTH_LONG).show();
 
+
+                            // check if the user is within the geofence
+                            user.setLat(lat);
+                            user.setLong(lon);
                             db.setPatientCoordinates(lat, lon, user.getCARER_ID(), user.getuID());
+                            boolean isPatientWithinFence = user.isPatientWithinGeofence();
+                            if(!isPatientWithinFence){
+                                //send notification
+                                alertPatientGeofence();
+                            }
                         }
                     }
                 }
@@ -603,5 +605,15 @@ public void switchWeatherScene(){
 
     public boolean getConnectedToSheeld() {
         return connectedToSheeld;
+    }
+
+    public void alertPatientGeofence(){
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.vca)
+                .setContentTitle("VCA!")
+                .setContentText(getString(R.string.you_are_beyond_the_safe_distance_from_your_home));
+
+        manager.notify(66, builder.build());
     }
 }

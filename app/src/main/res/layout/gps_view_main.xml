@@ -7,5 +7,7 @@
         android:id="@+id/getCoords_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Show current location" />
+        android:text="@string/show_current_location" />
+
+
 </LinearLayout>

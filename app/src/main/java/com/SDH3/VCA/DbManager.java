@@ -33,6 +33,11 @@ public class DbManager {
     static final String PATIENTS_DB_TAG = "Patients";
     static final String PATIENTS_FLATTENED_DB_TAG = "patients_flattened";
 
+    //Geofence-related tags
+    static final String PATIENT_GEOFENCE_LAT_TAG = "geofenceLat";
+    static final String PATIENT_GEOFENCE_LONG_TAG = "geofenceLong";
+    static final String PATIENT_GEOFENCE_RADIUS_TAG = "geofenceRadius";
+
     // business-related tags
     static final String BUSINESSES_DB_TAG = "businesses";
     static final String RESTAURANTS_DB_TAG = "restaurants";
@@ -53,6 +58,7 @@ public class DbManager {
     public DbManager() {
         firebaseDB = FirebaseDatabase.getInstance().getReference();
     }
+
 
     public UserProfile initUser(final UserProfile user, String uID) {
         // fill the user object with all the relevant data, starting with the uID
@@ -89,14 +95,17 @@ public class DbManager {
                     case PATIENT_LAST_NAME_DB_TAG:
                         user.setLName((String) dataSnapshot.getValue());
                         break;
-                    case PATIENT_LATITUDE_DB_TAG:
-                        user.setLat((Double) dataSnapshot.getValue());
-                        break;
                     case PATIENT_FIRST_NAME_DB_TAG:
                         user.setFName((String) dataSnapshot.getValue());
                         break;
-                    case PATIENT_LONGITUDE_DB_TAG:
-                        user.setLong((Double) dataSnapshot.getValue());
+                    case PATIENT_GEOFENCE_LAT_TAG:
+                        user.setGeofenceLatitude((Double) dataSnapshot.getValue());
+                        break;
+                    case PATIENT_GEOFENCE_LONG_TAG:
+                        user.setGeofenceLongitude((Double) dataSnapshot.getValue());
+                        break;
+                    case PATIENT_GEOFENCE_RADIUS_TAG:
+                        user.setGeofenceRadius((Double) dataSnapshot.getValue());
                         break;
                 }
             }
@@ -148,9 +157,10 @@ public class DbManager {
         userDBReference.child(PATIENT_LAST_NAME_DB_TAG).addListenerForSingleValueEvent(userDataListener);
         userDBReference.child(PATIENT_AGE_DB_TAG).addListenerForSingleValueEvent(userDataListener);
         userDBReference.child(PATIENT_CONDITION_DB_TAG).addListenerForSingleValueEvent(userDataListener);
-        userDBReference.child(PATIENT_LATITUDE_DB_TAG).addListenerForSingleValueEvent(userDataListener);
-        userDBReference.child(PATIENT_LONGITUDE_DB_TAG).addListenerForSingleValueEvent(userDataListener);
         userDBReference.child(PATIENT_CARER_ID_DB_TAG).addListenerForSingleValueEvent(userDataListener);
+        userDBReference.child(PATIENT_GEOFENCE_LAT_TAG).addListenerForSingleValueEvent(userDataListener);
+        userDBReference.child(PATIENT_GEOFENCE_LONG_TAG).addListenerForSingleValueEvent(userDataListener);
+        userDBReference.child(PATIENT_GEOFENCE_RADIUS_TAG).addListenerForSingleValueEvent(userDataListener);
 
         // cache lists of businesses that are available to the patient
         getBusinesses(uID, TAXIS_DB_TAG);
@@ -180,7 +190,6 @@ public class DbManager {
     public ArrayList<Business> getBusinesses(String uID, final String businessType){
         // this method takes a user's uID, to accommodate the possibility of tailoring search-results in the future
         // businessType should be one of the static strings listed above. This will get plugged into the query.
-
 
         // if the lists of available businesses haven't been cached, get them
         if (this.restaurants == null || this.taxis == null || this.shopping == null) {
