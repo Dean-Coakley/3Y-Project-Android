@@ -213,6 +213,8 @@ public class MainActivity extends AppCompatActivity
 
         voiceManager = new VoiceManager(this, this, REQ_CODE_SPEECH_INPUT);
         connectedToSheeld = false;
+        //MusicPlayer.playMusic();
+        playMusic();
     }
 
     private void weatherServicesInit() {
@@ -617,51 +619,53 @@ public void switchWeatherScene(){
     }
 
 
-    //This code will work with the button but the functionality of the code is broken.
+    private Button play;
+    private EditText urlET;
+    public MediaPlayer mediaPlayer = null;
 
-//    private Button play;
-//    private Button pause;
-//    private EditText urlET;
-//    public MediaPlayer mediaPlayer = null;
-//
-//    public void playMusic(){
-//
-//        urlET = (EditText)findViewById(R.id.music_link) ;
-//        final String url = urlET.getText().toString() ; // your URL here urlET.getText().toString()
-//
-//
-//        play = (Button) findViewById(R.id.play_music) ;
-//        play.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Log.e("Playing Mm888888888", url);
-//                try {
-//                    if(mediaPlayer != null && mediaPlayer.isPlaying())
-//                    {
-//                        mediaPlayer.stop();
-//                        mediaPlayer.release();
-//                        mediaPlayer = null;
-//                    }
-//                    else{
-//                        mediaPlayer =  new MediaPlayer();
-//
-//                        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                            SoundPool sp = new SoundPool.Builder().setAudioAttributes(new AudioAttributes.Builder()
-//                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-//                                    .setUsage(AudioAttributes.USAGE_MEDIA).build())
-//                                    .setMaxStreams(100).build();
-//                        }
-//                        mediaPlayer.setDataSource("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
-//                        mediaPlayer.prepare();
-//                        mediaPlayer.prepareAsync();
-//                        mediaPlayer.start();
-//                    }
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();}
-//            }
-//        });
-//    }
+    public void playMusic(){
+
+        play = (Button) findViewById(R.id.play_music) ;
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                urlET = (EditText)findViewById(R.id.music_link) ;
+                String url = urlET.getText().toString() ; // your URL toString
+
+                try {
+                    //MediaPlayer will be in a play state but will give a IllegalStateException when asked to be played
+                    if(mediaPlayer != null && mediaPlayer.isPlaying())
+                    {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
+                    else{
+
+                        //Instantiate your MediaPlayer
+                        mediaPlayer = new MediaPlayer();
+                        //This allows the device to be locked and to continue to play music
+                        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            SoundPool sp = new SoundPool.Builder().setAudioAttributes(new AudioAttributes.Builder()
+                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                    .setUsage(AudioAttributes.USAGE_MEDIA).build())
+                                    .setMaxStreams(1).build();
+                        }
+                        //Points the MediaPlayer at the link to play
+                        mediaPlayer.setDataSource(url);//Url may look like this "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+                        //Loads data source set abouve
+                        mediaPlayer.prepare();
+
+                        //Start Playing your .mp3 file
+                        mediaPlayer.start();
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();}
+            }
+        });
+    }
 }
 
