@@ -71,4 +71,10 @@
     <string name="fields">Fields cannot be empty</string>
     <string name="your_location_is_lat">Your location is: Lat:</string>
     <string name="comma_lon">, Lon:</string>
+    <string name="enter_word">Enter Word</string>
+    <string name="next_level">Next Level</string>
+    <string name="start_game">Start Game</string>
+    <string name="restart_level">Restart Level</string>
+    <string name="incorrect_word">Incorrect Word</string>
+    <string name="game_beat">You beat the game!</string>
 </resources>

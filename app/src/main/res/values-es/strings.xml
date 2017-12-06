@@ -43,4 +43,10 @@
     <string name="password">Contraseña</string>
     <string name="login">Iniciar sesión</string>
     <string name="fields">Estos campos no pueden estar vacíos</string>
+    <string name="enter_word">Enter Word</string>
+    <string name="next_level">Next Level</string>
+    <string name="start_game">Start Game</string>
+    <string name="restart_level">Restart Level</string>
+    <string name="incorrect_word">Incorrect Word</string>
+    <string name="game_beat">You beat the game!</string>
 </resources>
