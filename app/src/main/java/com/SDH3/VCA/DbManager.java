@@ -54,13 +54,18 @@ public class DbManager {
     private ArrayList<Business> taxis;
     private ArrayList<Business> shopping;
 
+    // this number is used to track if the user's attributes have been fully loaded. ( 0 = ready)
+    public static int userAttributeReadyCount= 8;
+
 
     public DbManager() {
         firebaseDB = FirebaseDatabase.getInstance().getReference();
     }
 
 
-    public UserProfile initUser(final UserProfile user, String uID) {
+    public UserProfile initUser(final UserProfile user, String uID, final MainActivity mainActivity) {
+
+
         // fill the user object with all the relevant data, starting with the uID
         user.setuID(uID);
 
@@ -74,6 +79,7 @@ public class DbManager {
                 // get the key of the entry that the snapshot is referring to.
                 String keyBeingChanged = dataSnapshot.getKey();
 
+                // when this number reaches 0, main will be notified that the user's data is ready
                 // depending on what attribute the key is targeting, update the user's data accordingly
                 // the switch uses the generic tags that are declared at the top of this class
                 // WARNING: all numbers from the database are passed as Longs, so they must be parsed accordingly
@@ -107,6 +113,11 @@ public class DbManager {
                     case PATIENT_GEOFENCE_RADIUS_TAG:
                         user.setGeofenceRadius((Double) dataSnapshot.getValue());
                         break;
+                }
+
+                userAttributeReadyCount--;
+                if (userAttributeReadyCount == 0){
+                    mainActivity.notifyUserDataReady(true);
                 }
             }
             @Override

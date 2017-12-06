@@ -1,6 +1,7 @@
 package com.SDH3.VCA;
 
 import android.annotation.SuppressLint;
+import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -12,6 +13,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
@@ -186,7 +188,7 @@ public class MainActivity extends AppCompatActivity
         String uID = loginInfo.getStringExtra("uID");
         db = new DbManager();
         user = new UserProfile();
-        db.initUser(user, uID);
+        db.initUser(user, uID, this);
 
 
         speechText = (TextView) findViewById(R.id.txtSpeechInput);
@@ -384,40 +386,6 @@ public class MainActivity extends AppCompatActivity
         weather_view = (LinearLayout) findViewById(R.id.weather_id);
         business_list_view = (LinearLayout) findViewById(R.id.business_list_layout);
 
-        getGPS_button = (Button) findViewById(R.id.getCoords_button);
-        getGPS_button.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Location l = null;
-                        l = locationServicesManager.getLastLocation();
-                        String message;
-                        if (l != null) {
-                            double lon = l.getLongitude();
-                            double lat = l.getLatitude();
-
-                            message = getString(R.string.your_location_is_lat) + lat
-                                    + getString(R.string.comma_lon) + lon;
-
-                            Toast.makeText(getApplicationContext(),
-                                    message,
-                                    Toast.LENGTH_LONG).show();
-
-
-                            // check if the user is within the geofence
-                            user.setLat(lat);
-                            user.setLong(lon);
-                            db.setPatientCoordinates(lat, lon, user.getCARER_ID(), user.getuID());
-                            boolean isPatientWithinFence = user.isPatientWithinGeofence();
-                            if(!isPatientWithinFence){
-                                //send notification
-                                alertPatientGeofence();
-                            }
-                        }
-                    }
-                }
-        );
-
         scanButton = (Button) findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -607,13 +575,17 @@ public void switchWeatherScene(){
         return connectedToSheeld;
     }
 
-    public void alertPatientGeofence(){
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.vca)
-                .setContentTitle("VCA!")
-                .setContentText(getString(R.string.you_are_beyond_the_safe_distance_from_your_home));
 
-        manager.notify(66, builder.build());
+    public void notifyUserDataReady(boolean ready){
+        if (ready){
+            Intent startGeofenceService = new Intent(this, GeoFenceService.class);
+            startGeofenceService.putExtra("geofence_latitude", String.valueOf(user.getGeofenceLatitude()));
+            startGeofenceService.putExtra("geofence_longitude", String.valueOf(user.getGeofenceLongitude()));
+            startGeofenceService.putExtra("geofence_radius", String.valueOf(user.getGeofenceRadius()));
+            startService(startGeofenceService);
+        }else{
+            Toast.makeText(this, "An error occurred while fetching user data",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }
