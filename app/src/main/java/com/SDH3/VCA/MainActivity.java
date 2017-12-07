@@ -35,6 +35,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity
     public static String PACKAGE_NAME;
 
     //Layout references
-    LinearLayout home_view,calendar_view, weather_view, business_list_view, music_view;
+    LinearLayout home_view,calendar_view, weather_view,memory_game_view, business_list_view, music_view;
 
     //Location
     LocationServicesManager locationServicesManager;
@@ -285,8 +286,6 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.nav_calendar) {
             calendar_view.setVisibility(View.VISIBLE);
         }
-        else if (id == R.id.nav_gps)
-            gps_view.setVisibility(View.VISIBLE);
         else if (id == R.id.nav_game) {
             memory_game_view.setVisibility(View.VISIBLE);
             game.init();
