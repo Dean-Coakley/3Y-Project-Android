@@ -21,8 +21,8 @@
                 android:id="@+id/game_include_tag"
                 android:visibility="gone"/>
 
-            <include layout = "@layout/gps_view_main"
-                android:id="@+id/gps_include_tag"
+            <include layout = "@layout/calendar_view_main"
+                android:id="@+id/calendar_layout"
                 android:visibility="gone"/>
 
             <include layout="@layout/weather"
@@ -100,7 +100,16 @@
                     android:text="@string/disconnect"
                     android:textColor="@color/blu"/>
 
+                <Button
+                    android:id="@+id/calendarButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/disconnect"
+                    android:textColor="@color/blu"/>
+
+
                 <TextView
+                    android:layout_marginTop="@dimen/extra_medium"
                     android:id="@+id/txtSpeechInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
