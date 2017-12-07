@@ -9,15 +9,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.speech.RecognizerIntent;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -48,6 +55,7 @@ import com.integreight.onesheeld.sdk.OneSheeldManager;
 import com.integreight.onesheeld.sdk.OneSheeldScanningCallback;
 import com.integreight.onesheeld.sdk.OneSheeldSdk;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -60,11 +68,7 @@ public class MainActivity extends AppCompatActivity
     public static String PACKAGE_NAME;
 
     //Layout references
-    LinearLayout home_view;
-    LinearLayout gps_view;
-    LinearLayout weather_view;
-    LinearLayout business_list_view;
-    LinearLayout memory_game_view;
+    LinearLayout home_view, gps_view, weather_view, business_list_view, music_view;
 
     //Location
     LocationServicesManager locationServicesManager;
@@ -185,10 +189,8 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         //location services init
         boolean success = locationServicesInit();
@@ -218,6 +220,8 @@ public class MainActivity extends AppCompatActivity
 
         voiceManager = new VoiceManager(this, this, REQ_CODE_SPEECH_INPUT);
         connectedToSheeld = false;
+        //MusicPlayer.playMusic();
+        playMusic();
     }
 
     private void weatherServicesInit() {
@@ -275,7 +279,8 @@ public class MainActivity extends AppCompatActivity
         gps_view.setVisibility(View.GONE);
         business_list_view.setVisibility(View.GONE);
         memory_game_view.setVisibility(View.GONE);
-
+        music_view.setVisibility(View.GONE);
+        
         if (id == R.id.nav_home)
             home_view.setVisibility(View.VISIBLE);
         else if (id == R.id.nav_weather)
@@ -285,6 +290,8 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.nav_game) {
             memory_game_view.setVisibility(View.VISIBLE);
             game.init();
+        } else if (id == R.id.nav_music) {
+            music_view.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_to) {
             //prepare the businesses layout
             showBusinesses(DbManager.RESTAURANTS_DB_TAG);
@@ -402,6 +409,7 @@ public class MainActivity extends AppCompatActivity
         weather_view = (LinearLayout) findViewById(R.id.weather_id);
         business_list_view = (LinearLayout) findViewById(R.id.business_list_layout);
         memory_game_view = (LinearLayout) findViewById(R.id.game_include_tag);
+        music_view = (LinearLayout) findViewById(R.id.music_layout);
 
         getGPS_button = (Button) findViewById(R.id.getCoords_button);
         getGPS_button.setOnClickListener(
@@ -598,6 +606,7 @@ public class MainActivity extends AppCompatActivity
         enterWord.setVisibility(View.GONE);
         startGame.setVisibility(View.GONE);
         restartLevel.setVisibility(View.GONE);
+
     }
 
     public void showBusinesses(final String businessType) {
@@ -692,7 +701,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void callNumberButtonOnClick(final String s) {
-
         //Call Permission Prompt
         checkCallPermission();
 
@@ -737,4 +745,55 @@ public void switchWeatherScene(){
     public boolean getConnectedToSheeld() {
         return connectedToSheeld;
     }
+
+
+    private Button play;
+    private EditText urlET;
+    public MediaPlayer mediaPlayer = null;
+
+    public void playMusic(){
+
+        play = (Button) findViewById(R.id.play_music) ;
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                urlET = (EditText)findViewById(R.id.music_link) ;
+                String url = urlET.getText().toString() ; // your URL toString
+
+                try {
+                    //MediaPlayer will be in a play state but will give a IllegalStateException when asked to be played
+                    if(mediaPlayer != null && mediaPlayer.isPlaying())
+                    {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
+                    else{
+
+                        //Instantiate your MediaPlayer
+                        mediaPlayer = new MediaPlayer();
+                        //This allows the device to be locked and to continue to play music
+                        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            SoundPool sp = new SoundPool.Builder().setAudioAttributes(new AudioAttributes.Builder()
+                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                    .setUsage(AudioAttributes.USAGE_MEDIA).build())
+                                    .setMaxStreams(1).build();
+                        }
+                        //Points the MediaPlayer at the link to play
+                        mediaPlayer.setDataSource(url);//Url may look like this "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+                        //Loads data source set abouve
+                        mediaPlayer.prepare();
+
+                        //Start Playing your .mp3 file
+                        mediaPlayer.start();
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();}
+            }
+        });
+    }
 }
+
