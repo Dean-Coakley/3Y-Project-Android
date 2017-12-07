@@ -12,7 +12,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class weatherFunction {
+public class WeatherFunction {
 
     private static final String OPEN_WEATHER_MAP_URL =
             "http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&units=metric";

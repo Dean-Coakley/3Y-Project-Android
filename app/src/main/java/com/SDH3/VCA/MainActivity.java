@@ -3,28 +3,25 @@ package com.SDH3.VCA;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.speech.RecognizerIntent;
+import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -34,31 +31,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.Manifest;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
 import com.integreight.onesheeld.sdk.OneSheeldScanningCallback;
 import com.integreight.onesheeld.sdk.OneSheeldSdk;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity
@@ -68,7 +62,7 @@ public class MainActivity extends AppCompatActivity
     public static String PACKAGE_NAME;
 
     //Layout references
-    LinearLayout home_view, gps_view, weather_view, business_list_view, music_view;
+    LinearLayout home_view,calendar_view, weather_view, business_list_view, music_view;
 
     //Location
     LocationServicesManager locationServicesManager;
@@ -213,8 +207,11 @@ public class MainActivity extends AppCompatActivity
 
         voiceManager = new VoiceManager(this, this, REQ_CODE_SPEECH_INPUT);
         connectedToSheeld = false;
-        //MusicPlayer.playMusic();
-        playMusic();
+        try {
+            playMusic();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void weatherServicesInit() {
@@ -268,23 +265,22 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         home_view.setVisibility(View.GONE);
+        calendar_view.setVisibility(View.GONE);
         weather_view.setVisibility(View.GONE);
-        gps_view.setVisibility(View.GONE);
         business_list_view.setVisibility(View.GONE);
         music_view.setVisibility(View.GONE);
 
         if (id == R.id.nav_home)
             home_view.setVisibility(View.VISIBLE);
         else if (id == R.id.nav_weather)
-           switchWeatherScene();
-        else if (id == R.id.nav_gps)
-            gps_view.setVisibility(View.VISIBLE);
-        else if (id == R.id.nav_game) {
+            switchWeatherScene();
+        else if (id == R.id.nav_calendar) {
+            calendar_view.setVisibility(View.VISIBLE);
+        } else if (id == R.id.nav_game) {
 
-        }
-        else if (id == R.id.nav_music) {
+        } else if (id == R.id.nav_music) {
             music_view.setVisibility(View.VISIBLE);
-        }else if (id == R.id.nav_to) {
+        } else if (id == R.id.nav_to) {
             //prepare the businesses layout
             showBusinesses(DbManager.RESTAURANTS_DB_TAG);
             business_list_view.setVisibility(View.VISIBLE);
@@ -396,36 +392,11 @@ public class MainActivity extends AppCompatActivity
     // GUI SETUP
     public void setupGUI() {
         // initialise included-layout references
-        gps_view = (LinearLayout) findViewById(R.id.gps_include_tag);
         home_view = (LinearLayout) findViewById(R.id.home_layout);
+        calendar_view = (LinearLayout) findViewById(R.id.calendar_layout);
         weather_view = (LinearLayout) findViewById(R.id.weather_id);
         business_list_view = (LinearLayout) findViewById(R.id.business_list_layout);
         music_view = (LinearLayout) findViewById(R.id.music_layout);
-
-        getGPS_button = (Button) findViewById(R.id.getCoords_button);
-        getGPS_button.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Location l = null;
-                        l = locationServicesManager.getLastLocation();
-                        String message;
-                        if (l != null) {
-                            double lon = l.getLongitude();
-                            double lat = l.getLatitude();
-
-                            message = getString(R.string.your_location_is_lat) + lat
-                                    + getString(R.string.comma_lon) + lon;
-
-                            Toast.makeText(getApplicationContext(),
-                                    message,
-                                    Toast.LENGTH_LONG).show();
-
-                            db.setPatientCoordinates(lat, lon, user.getCARER_ID(), user.getuID());
-                        }
-                    }
-                }
-        );
 
         scanButton = (Button) findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
@@ -435,7 +406,6 @@ public class MainActivity extends AppCompatActivity
                 scan();
             }
         });
-
 
         //disconnects all devices
         disconnectButton = (Button) findViewById(R.id.disconnectButton);
@@ -478,7 +448,43 @@ public class MainActivity extends AppCompatActivity
         toggleLights.setEnabled(false);
         disconnectButton.setEnabled(false);
 
-       //playMusic();
+        //playMusic();
+
+        //Calendar
+        Button addEventBtn = (Button) findViewById(R.id.addEventBtn);
+        CalendarView cal = (CalendarView) findViewById(R.id.calendarView);
+
+        final int[] yr = new int[1];
+        final int[] mn = new int[1];
+        final int[] dom = new int[1];
+        cal.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                yr[0] = year;
+                mn[0] = month;
+                dom[0] = dayOfMonth;
+            }
+        });
+        addEventBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String title = "";
+                String location = "";
+                long begin = System.currentTimeMillis();
+                addEvent(title, location, begin, begin);
+
+                //My form intent that doesn't seem to work
+//                Intent addEvent = new Intent(MainActivity.this, EventAdd.class);
+//                Bundle b = new Bundle();
+//                b.putIntArray("year", yr);
+//                b.putIntArray("month", mn);
+//                b.putIntArray("dayOfMon", dom);
+//                addEvent.putExtras(b);
+//                startActivity(addEvent);
+            }
+        });
+
     }
 
     public void showBusinesses(final String businessType) {
@@ -538,7 +544,7 @@ public class MainActivity extends AppCompatActivity
 
 
         Location l = locationServicesManager.getLastLocation();
-        weatherFunction.placeIdTask asyncTask = new weatherFunction.placeIdTask(new weatherFunction.AsyncResponse() {
+        WeatherFunction.placeIdTask asyncTask = new WeatherFunction.placeIdTask(new WeatherFunction.AsyncResponse() {
             @SuppressLint("SetTextI18n")
             public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_updatedOn, String icon, String sun_rise) {
                 cityField.setText(weather_city);
@@ -592,15 +598,15 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-public void switchWeatherScene(){
+    public void switchWeatherScene() {
         weatherReport();
         home_view.setVisibility(View.GONE);
         weather_view.setVisibility(View.VISIBLE);
-        gps_view.setVisibility(View.GONE);
         business_list_view.setVisibility(View.GONE);
+        calendar_view.setVisibility(View.GONE);
     }
-    
-    public void openWebpage(String url){
+
+    public void openWebpage(String url) {
         Intent page = new Intent(Intent.ACTION_VIEW);
         page.setData(Uri.parse(url));
         startActivity(page);
@@ -619,28 +625,38 @@ public void switchWeatherScene(){
     }
 
 
-    private Button play;
-    private EditText urlET;
+    private ImageButton play;
+    private ImageButton stop;
+    private Spinner urlS;
     public MediaPlayer mediaPlayer = null;
+    private String songName;
+    private String songURL;
 
-    public void playMusic(){
 
-        play = (Button) findViewById(R.id.play_music) ;
+    public void playMusic() throws FileNotFoundException {
+
+        urlS = (Spinner) findViewById(R.id.music_link);
+        ArrayAdapter<CharSequence> musicAdapter = ArrayAdapter.createFromResource(MainActivity.this, R.array.music, android.R.layout.simple_list_item_1);
+        urlS.setAdapter(musicAdapter);
+
+        play = (ImageButton) findViewById(R.id.play_music);
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                urlET = (EditText)findViewById(R.id.music_link) ;
-                String url = urlET.getText().toString() ; // your URL toString
+
+                String url = getResources().getStringArray(R.array.musicUrl)[urlS.getSelectedItemPosition()];
 
                 try {
+
+
                     //MediaPlayer will be in a play state but will give a IllegalStateException when asked to be played
-                    if(mediaPlayer != null && mediaPlayer.isPlaying())
-                    {
+                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+
                         mediaPlayer.stop();
                         mediaPlayer.release();
                         mediaPlayer = null;
-                    }
-                    else{
+                        play.setImageResource(R.drawable.play_button);
+                    } else {
 
                         //Instantiate your MediaPlayer
                         mediaPlayer = new MediaPlayer();
@@ -654,8 +670,11 @@ public void switchWeatherScene(){
                         }
                         //Points the MediaPlayer at the link to play
                         mediaPlayer.setDataSource(url);//Url may look like this "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-                        //Loads data source set abouve
+                        //Loads data source set above
                         mediaPlayer.prepare();
+
+                        play.setImageResource(R.drawable.stop_button);
+
 
                         //Start Playing your .mp3 file
                         mediaPlayer.start();
@@ -663,9 +682,21 @@ public void switchWeatherScene(){
                     }
 
                 } catch (Exception e) {
-                    e.printStackTrace();}
+                    e.printStackTrace();
+                }
             }
         });
     }
-}
 
+    public void addEvent(String title, String location, long begin, long end) {
+        Intent calIntent = new Intent(Intent.ACTION_INSERT)
+                .setData(CalendarContract.Events.CONTENT_URI)
+                .putExtra(CalendarContract.Events.TITLE, title)
+                .putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin)
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
+        if (calIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(calIntent);
+        }
+    }
+}
