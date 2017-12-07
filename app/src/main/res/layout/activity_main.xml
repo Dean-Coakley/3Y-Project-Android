@@ -17,6 +17,9 @@
 
             <!--  this layout will 'include' all other layouts.
             to switch between them, visibility is toggled. -->
+            <include layout = "@layout/memory_game"
+                android:id="@+id/game_include_tag"
+                android:visibility="gone"/>
 
             <include layout = "@layout/calendar_view_main"
                 android:id="@+id/calendar_layout"

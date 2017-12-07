@@ -95,12 +95,17 @@ public class MainActivity extends AppCompatActivity
     private ImageButton btnSpeak;
     private boolean connectedToSheeld;
     private VoiceManager voiceManager;
-    private final int MY_PERMISSIONS_REQUEST_LOCATION = 123456789;
-    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private final int MY_PERMISSIONS_REQUEST_LOCATION = 123456789, REQ_CODE_SPEECH_INPUT = 100;
 
     // Call Permission final variables
     private final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
     private final int PERMISSION_REQUEST = 100;
+
+    private MemoryGame game;
+
+    private TextView levelText, enteredWords, gameWords;
+    private EditText wordEntry;
+    private Button startGame, nextLevel, enterWord, restartLevel;
 
     private OneSheeldScanningCallback scanningCallback = new OneSheeldScanningCallback() {
         @Override
@@ -164,6 +169,8 @@ public class MainActivity extends AppCompatActivity
         // add callback functions for handling connections / scanning
         manager.addConnectionCallback(connectionCallback);
         manager.addScanningCallback(scanningCallback);
+
+        game = new MemoryGame();
 
         //Location Permission prompt
         checkLocationPermission();
@@ -268,16 +275,21 @@ public class MainActivity extends AppCompatActivity
         calendar_view.setVisibility(View.GONE);
         weather_view.setVisibility(View.GONE);
         business_list_view.setVisibility(View.GONE);
+        memory_game_view.setVisibility(View.GONE);
         music_view.setVisibility(View.GONE);
-
+        
         if (id == R.id.nav_home)
             home_view.setVisibility(View.VISIBLE);
         else if (id == R.id.nav_weather)
             switchWeatherScene();
         else if (id == R.id.nav_calendar) {
             calendar_view.setVisibility(View.VISIBLE);
-        } else if (id == R.id.nav_game) {
-
+        }
+        else if (id == R.id.nav_gps)
+            gps_view.setVisibility(View.VISIBLE);
+        else if (id == R.id.nav_game) {
+            memory_game_view.setVisibility(View.VISIBLE);
+            game.init();
         } else if (id == R.id.nav_music) {
             music_view.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_to) {
@@ -290,7 +302,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_taxi) {
             showBusinesses(DbManager.TAXIS_DB_TAG);
             business_list_view.setVisibility(View.VISIBLE);
-
         } else if (id == R.id.sign_out) {
             ProgressDialog pd = new ProgressDialog(this);
             pd.setMessage("Logging out..");
@@ -396,6 +407,7 @@ public class MainActivity extends AppCompatActivity
         calendar_view = (LinearLayout) findViewById(R.id.calendar_layout);
         weather_view = (LinearLayout) findViewById(R.id.weather_id);
         business_list_view = (LinearLayout) findViewById(R.id.business_list_layout);
+        memory_game_view = (LinearLayout) findViewById(R.id.game_include_tag);
         music_view = (LinearLayout) findViewById(R.id.music_layout);
 
         scanButton = (Button) findViewById(R.id.scanButton);
@@ -448,8 +460,6 @@ public class MainActivity extends AppCompatActivity
         toggleLights.setEnabled(false);
         disconnectButton.setEnabled(false);
 
-        //playMusic();
-
         //Calendar
         Button addEventBtn = (Button) findViewById(R.id.addEventBtn);
         CalendarView cal = (CalendarView) findViewById(R.id.calendarView);
@@ -484,7 +494,125 @@ public class MainActivity extends AppCompatActivity
 //                startActivity(addEvent);
             }
         });
+        setUpGame();
+    }
 
+    public void setUpGame(){
+        //Game related variables
+        levelText = (TextView) findViewById(R.id.levelText);
+        enteredWords = (TextView) findViewById(R.id.enteredWordsText);
+        enteredWords.setVisibility(View.GONE);
+
+        wordEntry = (EditText) findViewById(R.id.wordEntry);
+        wordEntry.setVisibility(View.GONE);
+
+        gameWords = (TextView) findViewById(R.id.gameWords);
+        gameWords.setVisibility(View.GONE);
+
+        nextLevel = (Button) findViewById(R.id.nextLevel);
+        nextLevel.setVisibility(View.GONE);
+        nextLevel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(game.nextLevel()) {
+                    levelText.setText(game.getLevel());
+                    enteredWords.setText(game.getCorrectWords());
+                    gameWords.setText(game.getGameWords());
+                    startGame();
+
+                    resetGameVisibility();
+                    gameWords.setVisibility(View.VISIBLE);
+                }
+                else
+                    Toast.makeText(MainActivity.this,
+                            R.string.game_beat, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        startGame = (Button) findViewById(R.id.startGame);
+        startGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                game.launchGame();
+                levelText.setText(game.getLevel());
+                enteredWords.setText(game.getCorrectWords());
+                gameWords.setText(game.getGameWords());
+
+                resetGameVisibility();
+                gameWords.setVisibility(View.VISIBLE);
+
+                startGame();
+            }
+        });
+        enterWord = (Button) findViewById(R.id.enterWord);
+        enterWord.setVisibility(View.GONE);
+        enterWord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(game.checkWord(wordEntry.getText().toString())) {
+                    enteredWords.setText(game.getCorrectWords());
+                    wordEntry.setText("");
+                }
+                else {
+                    wordEntry.setText("");
+                    Toast.makeText(MainActivity.this,
+                            R.string.incorrect_word, Toast.LENGTH_SHORT).show();
+                }
+                if(game.isWon()) {
+                    resetGameVisibility();
+                    nextLevel.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        restartLevel = (Button) findViewById(R.id.restart);
+        restartLevel.setVisibility(View.GONE);
+        restartLevel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                game.restartLevel();
+                enteredWords.setText(game.getCorrectWords());
+                gameWords.setText(game.getGameWords());
+                startGame();
+
+                resetGameVisibility();
+                gameWords.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    public void startGame(){
+        Runnable myRunnable = new Runnable(){
+            public void run(){
+                try {
+                    Thread.sleep(4000*game.getLevelInt());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        enteredWords.setVisibility(View.VISIBLE);
+                        wordEntry.setVisibility(View.VISIBLE);
+                        gameWords.setVisibility(View.GONE);
+                        enterWord.setVisibility(View.VISIBLE);
+                        restartLevel.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        };
+
+        Thread thread = new Thread(myRunnable);
+        thread.start();
+    }
+
+    public void resetGameVisibility(){
+        nextLevel.setVisibility(View.GONE);
+        enteredWords.setVisibility(View.GONE);
+        wordEntry.setVisibility(View.GONE);
+        gameWords.setVisibility(View.GONE);
+        enterWord.setVisibility(View.GONE);
+        startGame.setVisibility(View.GONE);
+        restartLevel.setVisibility(View.GONE);
     }
 
     public void showBusinesses(final String businessType) {
@@ -579,7 +707,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void callNumberButtonOnClick(final String s) {
-
         //Call Permission Prompt
         checkCallPermission();
 
@@ -604,6 +731,7 @@ public class MainActivity extends AppCompatActivity
         weather_view.setVisibility(View.VISIBLE);
         business_list_view.setVisibility(View.GONE);
         calendar_view.setVisibility(View.GONE);
+        memory_game_view.setVisibility(View.GONE);
     }
 
     public void openWebpage(String url) {
@@ -647,7 +775,6 @@ public class MainActivity extends AppCompatActivity
                 String url = getResources().getStringArray(R.array.musicUrl)[urlS.getSelectedItemPosition()];
 
                 try {
-
 
                     //MediaPlayer will be in a play state but will give a IllegalStateException when asked to be played
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
