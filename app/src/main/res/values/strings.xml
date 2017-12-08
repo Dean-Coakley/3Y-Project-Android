@@ -83,4 +83,10 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="enter_url_here">Enter URL here</string>
+
+    <!--Twitter API keys-->
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">1BZPib2EMP9yqOZeMRniU7LdN</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">djrVmIpaWwL7Uio0qhqMuQh40umhgiuiBDtdc6QqtrpnfIRJDb</string>
+    <string name="tap_button_to_record_voice">Tap Button to Record Voice</string>
+    <string name="tweet_geofence">Tweet GeoFence</string>
 </resources>

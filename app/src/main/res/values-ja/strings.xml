@@ -49,4 +49,6 @@
     <string name="restart_level">Restart Level</string>
     <string name="incorrect_word">Incorrect Word</string>
     <string name="game_beat">You beat the game!</string>
+    <string name="tap_button_to_record_voice">Tap Button to Record Voice</string>
+    <string name="tweet_geofence">Tweet GeoFence</string>
 </resources>

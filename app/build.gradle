@@ -33,10 +33,13 @@ dependencies {
     compile 'com.google.firebase:firebase-auth:11.4.2' //authentication
     compile 'com.google.firebase:firebase-messaging:11.4.2' //cloud messaging
 
+    compile 'com.twitter.sdk.android:twitter:3.1.1'
+
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 	compile 'com.integreight.onesheeld:sdk:2.2.0'
     testCompile 'junit:junit:4.12'
     compile project(path: ':sdk')
+
 }
 
 // for firebase
