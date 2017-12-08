@@ -1,5 +1,6 @@
 package com.SDH3.VCA;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.support.annotation.RequiresApi;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -24,11 +26,15 @@ import android.telephony.TelephonyManager;
 import android.text.Html;
 import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -41,7 +47,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.Manifest;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +56,14 @@ import com.integreight.onesheeld.sdk.OneSheeldDevice;
 import com.integreight.onesheeld.sdk.OneSheeldManager;
 import com.integreight.onesheeld.sdk.OneSheeldScanningCallback;
 import com.integreight.onesheeld.sdk.OneSheeldSdk;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -63,7 +76,7 @@ public class MainActivity extends AppCompatActivity
     public static String PACKAGE_NAME;
 
     //Layout references
-    LinearLayout home_view,calendar_view, weather_view,memory_game_view, business_list_view, music_view;
+    LinearLayout home_view, calendar_view, weather_view, business_list_view, music_view, memory_game_view;
 
     //Location
     LocationServicesManager locationServicesManager;
@@ -102,11 +115,15 @@ public class MainActivity extends AppCompatActivity
     private final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
     private final int PERMISSION_REQUEST = 100;
 
+    //Game variables
     private MemoryGame game;
-
     private TextView levelText, enteredWords, gameWords;
     private EditText wordEntry;
     private Button startGame, nextLevel, enterWord, restartLevel;
+
+    //Twitter variables
+    private TwitterLoginButton loginButton;
+    private Button tweetButton;
 
     private OneSheeldScanningCallback scanningCallback = new OneSheeldScanningCallback() {
         @Override
@@ -156,6 +173,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Twitter.initialize(this);
         setContentView(R.layout.activity_main);
         PACKAGE_NAME = getPackageName();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -459,6 +477,45 @@ public class MainActivity extends AppCompatActivity
         toggleLights.setEnabled(false);
         disconnectButton.setEnabled(false);
 
+
+        loginButton = (TwitterLoginButton) findViewById(R.id.login_button);
+        loginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                // Do something with result, which provides a TwitterSession for making API calls
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Toast.makeText(MainActivity.this,
+                        "Could not login to Twitter" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        tweetButton = (Button) findViewById(R.id.tweetButton);
+        tweetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final TwitterSession session = TwitterCore.getInstance().getSessionManager()
+                        .getActiveSession();
+                if(session != null) {
+                    Location l = locationServicesManager.getLastLocation();
+                    if (l != null) {
+                        double lon = l.getLongitude();
+                        double lat = l.getLatitude();
+                    final Intent intent = new ComposerActivity.Builder(MainActivity.this)
+                            .session(session)
+                            .text(lon + ", " + lat)
+                            .hashtags("#geoTag")
+                            .createIntent();
+                        startActivity(intent);
+                    }
+                }
+                else
+                    Toast.makeText(MainActivity.this,
+                            "Log in to Twitter first", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         //Calendar
         Button addEventBtn = (Button) findViewById(R.id.addEventBtn);
         CalendarView cal = (CalendarView) findViewById(R.id.calendarView);
@@ -703,6 +760,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             }
         }
+
+        loginButton.onActivityResult(requestCode, resultCode, data);
     }
 
     public void callNumberButtonOnClick(final String s) {

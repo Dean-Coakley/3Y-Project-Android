@@ -113,15 +113,37 @@
                     android:id="@+id/txtSpeechInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tap Button to Record Voice" />
+                    android:text="@string/tap_button_to_record_voice" />
 
                 <ImageButton
                     android:id="@+id/btnSpeak"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:layout_margin="32dp"
                     android:src="@drawable/ic_voice"
                     android:background="@android:color/transparent" />
+
+                <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+                        android:id="@+id/login_button"
+                        android:layout_width="match_parent"
+                        android:layout_centerInParent="true"
+                        android:layout_margin="8dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"/>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/tweetButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tweet_geofence"
+                    android:layout_margin="8dp"
+                    android:background="#5BAAF4"
+                    android:textColor="#FFFFFF"/>
 
             </LinearLayout>
         </LinearLayout>
