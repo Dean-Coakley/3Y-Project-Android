@@ -14,17 +14,17 @@
             android:textSize="@dimen/extra_medium"
             android:paddingBottom="50dp"/>
 
-        <EditText
+        <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/music_link"
-            android:hint="@string/enter_url_here"/>
+            android:id="@+id/music_link" />
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/play_music"
                 android:layout_gravity="center"
-                android:text="@string/play"/>
+                android:layout_marginTop="80dp"
+                android:src="@drawable/play_button"/>
 
 </LinearLayout>

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userNameInput;
     private EditText passwordInput;
     private ProgressDialog pd;
-
 
 
     @Override
