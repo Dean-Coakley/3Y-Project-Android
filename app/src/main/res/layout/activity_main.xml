@@ -50,8 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="20dp"
-                    android:layout_gravity="center"
-                    />
+                    android:layout_gravity="center" />
 
                 <Button
                     android:id="@+id/scanButton"
@@ -100,14 +99,6 @@
                     android:text="@string/disconnect"
                     android:textColor="@color/blu"/>
 
-                <Button
-                    android:id="@+id/calendarButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/disconnect"
-                    android:textColor="@color/blu"/>
-
-
                 <TextView
                     android:layout_marginTop="@dimen/extra_medium"
                     android:id="@+id/txtSpeechInput"
@@ -120,7 +111,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:layout_margin="32dp"
+                    android:layout_margin="8dp"
                     android:src="@drawable/ic_voice"
                     android:background="@android:color/transparent" />
 
