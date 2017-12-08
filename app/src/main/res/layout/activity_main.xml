@@ -100,14 +100,6 @@
                     android:text="@string/disconnect"
                     android:textColor="@color/blu"/>
 
-                <Button
-                    android:id="@+id/calendarButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/disconnect"
-                    android:textColor="@color/blu"/>
-
-
                 <TextView
                     android:layout_marginTop="@dimen/extra_medium"
                     android:id="@+id/txtSpeechInput"
