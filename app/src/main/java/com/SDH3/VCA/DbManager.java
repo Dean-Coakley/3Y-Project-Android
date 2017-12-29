@@ -49,12 +49,20 @@ public class DbManager {
     private ArrayList<Business> taxis;
     private ArrayList<Business> shopping;
 
+    //Geofence-related tags
+    static final String PATIENT_GEOFENCE_LAT_TAG = "geofenceLat";
+    static final String PATIENT_GEOFENCE_LONG_TAG = "geofenceLong";
+    static final String PATIENT_GEOFENCE_RADIUS_TAG = "geofenceRadius";
+
+    // this number is used to track if the user's attributes have been fully loaded. ( 0 = ready)
+    public static int userAttributeReadyCount= 8;
 
     public DbManager() {
         firebaseDB = FirebaseDatabase.getInstance().getReference();
     }
 
-    public UserProfile initUser(final UserProfile user, String uID) {
+    public UserProfile initUser(final UserProfile user, String uID, final MainActivity mainActivity) {
+
         // fill the user object with all the relevant data, starting with the uID
         user.setuID(uID);
 
@@ -68,6 +76,7 @@ public class DbManager {
                 // get the key of the entry that the snapshot is referring to.
                 String keyBeingChanged = dataSnapshot.getKey();
 
+                // when this number reaches 0, main will be notified that the user's data is ready
                 // depending on what attribute the key is targeting, update the user's data accordingly
                 // the switch uses the generic tags that are declared at the top of this class
                 // WARNING: all numbers from the database are passed as Longs, so they must be parsed accordingly
@@ -89,17 +98,25 @@ public class DbManager {
                     case PATIENT_LAST_NAME_DB_TAG:
                         user.setLName((String) dataSnapshot.getValue());
                         break;
-                    case PATIENT_LATITUDE_DB_TAG:
-                        user.setLat((Double) dataSnapshot.getValue());
-                        break;
                     case PATIENT_FIRST_NAME_DB_TAG:
                         user.setFName((String) dataSnapshot.getValue());
                         break;
-                    case PATIENT_LONGITUDE_DB_TAG:
-                        user.setLong((Double) dataSnapshot.getValue());
+                    case PATIENT_GEOFENCE_LAT_TAG:
+                        user.setGeofenceLatitude((Double) dataSnapshot.getValue());
+                        break;
+                    case PATIENT_GEOFENCE_LONG_TAG:
+                        user.setGeofenceLongitude((Double) dataSnapshot.getValue());
+                        break;
+                    case PATIENT_GEOFENCE_RADIUS_TAG:
+                        user.setGeofenceRadius((Double) dataSnapshot.getValue());
                         break;
                 }
+                userAttributeReadyCount--;
+                if (userAttributeReadyCount == 0){
+                    mainActivity.notifyUserDataReady(true);
+                }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 /* To cancel existence, or not to cancel existence: that is the question:
@@ -138,7 +155,6 @@ public class DbManager {
                         The fair Ophelia! Nymph, in thy orisons
                 Be all my sins remember’d. */
             }
-
         };
 
         // attach the above listener to all database attributes that we want to keep track of.
@@ -148,9 +164,10 @@ public class DbManager {
         userDBReference.child(PATIENT_LAST_NAME_DB_TAG).addListenerForSingleValueEvent(userDataListener);
         userDBReference.child(PATIENT_AGE_DB_TAG).addListenerForSingleValueEvent(userDataListener);
         userDBReference.child(PATIENT_CONDITION_DB_TAG).addListenerForSingleValueEvent(userDataListener);
-        userDBReference.child(PATIENT_LATITUDE_DB_TAG).addListenerForSingleValueEvent(userDataListener);
-        userDBReference.child(PATIENT_LONGITUDE_DB_TAG).addListenerForSingleValueEvent(userDataListener);
         userDBReference.child(PATIENT_CARER_ID_DB_TAG).addListenerForSingleValueEvent(userDataListener);
+        userDBReference.child(PATIENT_GEOFENCE_LAT_TAG).addListenerForSingleValueEvent(userDataListener);
+        userDBReference.child(PATIENT_GEOFENCE_LONG_TAG).addListenerForSingleValueEvent(userDataListener);
+        userDBReference.child(PATIENT_GEOFENCE_RADIUS_TAG).addListenerForSingleValueEvent(userDataListener);
 
         // cache lists of businesses that are available to the patient
         getBusinesses(uID, TAXIS_DB_TAG);
@@ -180,7 +197,6 @@ public class DbManager {
     public ArrayList<Business> getBusinesses(String uID, final String businessType){
         // this method takes a user's uID, to accommodate the possibility of tailoring search-results in the future
         // businessType should be one of the static strings listed above. This will get plugged into the query.
-
 
         // if the lists of available businesses haven't been cached, get them
         if (this.restaurants == null || this.taxis == null || this.shopping == null) {

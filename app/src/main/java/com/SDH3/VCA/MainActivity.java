@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity
         String uID = loginInfo.getStringExtra("uID");
         db = new DbManager();
         user = new UserProfile();
-        db.initUser(user, uID);
+        db.initUser(user, uID, this);
 
 
         speechText = (TextView) findViewById(R.id.txtSpeechInput);
@@ -882,6 +882,19 @@ public class MainActivity extends AppCompatActivity
                 .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
         if (calIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(calIntent);
+        }
+    }
+
+    public void notifyUserDataReady(boolean ready){
+        if (ready){
+            Intent startGeofenceService = new Intent(this, GeoFenceService.class);
+            startGeofenceService.putExtra("geofence_latitude", String.valueOf(user.getGeofenceLatitude()));
+            startGeofenceService.putExtra("geofence_longitude", String.valueOf(user.getGeofenceLongitude()));
+            startGeofenceService.putExtra("geofence_radius", String.valueOf(user.getGeofenceRadius()));
+            startService(startGeofenceService);
+        }else{
+            Toast.makeText(this, "An error occurred while fetching user data",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 }

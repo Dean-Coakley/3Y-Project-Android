@@ -96,6 +96,7 @@
     <string name="choose_start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="calendar">Calendar</string>
+    <string name="you_are_beyond_the_safe_distance_from_your_home">You are beyond the safe distance from your home</string>
 
     <string-array name="music">
         <item>Song 1</item><item>Song 2</item><item>Song 3</item>

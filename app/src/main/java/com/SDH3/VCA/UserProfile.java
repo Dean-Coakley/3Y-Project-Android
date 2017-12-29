@@ -12,6 +12,10 @@ public class UserProfile {
     private double latitude = 50;
     private double longitude = 8;
 
+    private double geofenceLatitude;
+    private double geofenceLongitude;
+    private double geofenceRadius;
+
     public String getCondition() {
         return condition;
     }
@@ -64,5 +68,30 @@ public class UserProfile {
     }
     public void setuID(String uID) {
         this.uID = uID;
+    }
+
+    public double getGeofenceLatitude() {return geofenceLatitude;}
+    public void setGeofenceLatitude(double geofenceLatitude) {this.geofenceLatitude = geofenceLatitude;}
+
+    public double getGeofenceLongitude() {return geofenceLongitude;}
+    public void setGeofenceLongitude(double geofenceLongitude) {this.geofenceLongitude = geofenceLongitude;}
+
+    public double getGeofenceRadius() {return geofenceRadius;}
+    public void setGeofenceRadius(double geofenceRadius) {this.geofenceRadius = geofenceRadius;}
+
+    public boolean isPatientWithinGeofence(){
+        // Pythagoras's Beard! The patient has escaped!
+        double x1 = geofenceLatitude;
+        double x2 = latitude;
+        double y1 = geofenceLongitude;
+        double y2 = longitude;
+
+        // Formula: root(  sqr(x2 - x1) + sqr(y2 - y1) )
+        double a = Math.pow( (x2 - x1) , 2.0 );
+        double b = Math.pow( (y2 - y1) , 2.0 );
+        double c = a + b; //What is this, the junior cert?
+
+        double distanceFromOrigin = Math.sqrt(c);
+        return distanceFromOrigin < geofenceRadius;
     }
 }
