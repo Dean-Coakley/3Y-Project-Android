@@ -15,7 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-
 public class GeoFenceService extends Service implements LocationListener {
 
     private LocationManager locationManager;
@@ -55,8 +54,6 @@ public class GeoFenceService extends Service implements LocationListener {
 
         return START_REDELIVER_INTENT;
     }
-
-
 
     @Override
     public void onLocationChanged(Location l) {

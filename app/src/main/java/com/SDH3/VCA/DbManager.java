@@ -57,6 +57,13 @@ public class DbManager {
     // this number is used to track if the user's attributes have been fully loaded. ( 0 = ready)
     public static int userAttributeReadyCount= 8;
 
+    //Geofence-related tags
+    static final String PATIENT_GEOFENCE_LAT_TAG = "geofenceLat";
+    static final String PATIENT_GEOFENCE_LONG_TAG = "geofenceLong";
+    static final String PATIENT_GEOFENCE_RADIUS_TAG = "geofenceRadius";
+
+    // this number is used to track if the user's attributes have been fully loaded. ( 0 = ready)
+    public static int userAttributeReadyCount= 8;
 
     public DbManager() {
         firebaseDB = FirebaseDatabase.getInstance().getReference();
@@ -64,7 +71,6 @@ public class DbManager {
 
 
     public UserProfile initUser(final UserProfile user, String uID, final MainActivity mainActivity) {
-
 
         // fill the user object with all the relevant data, starting with the uID
         user.setuID(uID);
@@ -120,6 +126,7 @@ public class DbManager {
                     mainActivity.notifyUserDataReady(true);
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 /* To cancel existence, or not to cancel existence: that is the question:
@@ -158,7 +165,6 @@ public class DbManager {
                         The fair Ophelia! Nymph, in thy orisons
                 Be all my sins remember’d. */
             }
-
         };
 
         // attach the above listener to all database attributes that we want to keep track of.

@@ -11,17 +11,22 @@
             android:icon="@drawable/ic_menu_weather"
             android:title="@string/weather" />
         <item
-            android:id="@+id/nav_gps"
-            android:icon="@drawable/ic_menu_gps"
-            android:title="@string/gps" />
+            android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_menu_cal"
+            android:title="@string/calendar" />
         <item
             android:id="@+id/nav_game"
             android:icon="@drawable/ic_menu_game"
             android:title="@string/game" />
+        <item
+            android:id="@+id/nav_music"
+            android:icon="@drawable/ic_menu_music"
+            android:title="@string/music" />
     </group>
 
     <item android:title="@string/order">
         <menu>
+        <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_to"
                 android:icon="@drawable/ic_menu_takeout"
@@ -34,6 +39,7 @@
                 android:id="@+id/nav_taxi"
                 android:icon="@drawable/ic_menu_taxi"
                 android:title="@string/taxi" />
+        </group>
         </menu>
     </item>
 
