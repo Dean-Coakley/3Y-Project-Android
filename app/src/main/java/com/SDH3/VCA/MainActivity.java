@@ -2,6 +2,8 @@ package com.SDH3.VCA;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.IntentService;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -21,6 +23,7 @@ import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Html;
@@ -49,7 +52,6 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.integreight.onesheeld.sdk.OneSheeldConnectionCallback;
 import com.integreight.onesheeld.sdk.OneSheeldDevice;
@@ -64,10 +66,8 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -426,7 +426,6 @@ public class MainActivity extends AppCompatActivity
         business_list_view = (LinearLayout) findViewById(R.id.business_list_layout);
         memory_game_view = (LinearLayout) findViewById(R.id.game_include_tag);
         music_view = (LinearLayout) findViewById(R.id.music_layout);
-
         scanButton = (Button) findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -809,7 +808,6 @@ public class MainActivity extends AppCompatActivity
     public boolean getConnectedToSheeld() {
         return connectedToSheeld;
     }
-
 
     private ImageButton play;
     private ImageButton stop;

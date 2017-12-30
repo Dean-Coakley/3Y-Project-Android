@@ -40,6 +40,9 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <service android:name=".GeoFenceService">
+
+        </service>
 
         <activity android:name=".EventAdd"></activity>
         <service android:name=".GeoFenceService"/>

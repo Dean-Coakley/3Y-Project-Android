@@ -33,6 +33,11 @@ public class DbManager {
     static final String PATIENTS_DB_TAG = "Patients";
     static final String PATIENTS_FLATTENED_DB_TAG = "patients_flattened";
 
+    //Geofence-related tags
+    static final String PATIENT_GEOFENCE_LAT_TAG = "geofenceLat";
+    static final String PATIENT_GEOFENCE_LONG_TAG = "geofenceLong";
+    static final String PATIENT_GEOFENCE_RADIUS_TAG = "geofenceRadius";
+
     // business-related tags
     static final String BUSINESSES_DB_TAG = "businesses";
     static final String RESTAURANTS_DB_TAG = "restaurants";
@@ -49,6 +54,9 @@ public class DbManager {
     private ArrayList<Business> taxis;
     private ArrayList<Business> shopping;
 
+    // this number is used to track if the user's attributes have been fully loaded. ( 0 = ready)
+    public static int userAttributeReadyCount= 8;
+
     //Geofence-related tags
     static final String PATIENT_GEOFENCE_LAT_TAG = "geofenceLat";
     static final String PATIENT_GEOFENCE_LONG_TAG = "geofenceLong";
@@ -60,6 +68,7 @@ public class DbManager {
     public DbManager() {
         firebaseDB = FirebaseDatabase.getInstance().getReference();
     }
+
 
     public UserProfile initUser(final UserProfile user, String uID, final MainActivity mainActivity) {
 
@@ -111,6 +120,7 @@ public class DbManager {
                         user.setGeofenceRadius((Double) dataSnapshot.getValue());
                         break;
                 }
+
                 userAttributeReadyCount--;
                 if (userAttributeReadyCount == 0){
                     mainActivity.notifyUserDataReady(true);

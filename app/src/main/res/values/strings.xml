@@ -71,6 +71,8 @@
     <string name="fields">Fields cannot be empty</string>
     <string name="your_location_is_lat">Your location is: Lat:</string>
     <string name="comma_lon">, Lon:</string>
+    <string name="show_current_location">Show current location</string>
+    <string name="you_are_beyond_the_safe_distance_from_your_home">You are beyond the safe distance from your home!</string>
     
   <!-- Strings related to game -->
     <string name="enter_word">Enter Word</string>
