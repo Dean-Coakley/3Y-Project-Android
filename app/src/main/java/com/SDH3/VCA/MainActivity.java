@@ -2,8 +2,6 @@ package com.SDH3.VCA;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.IntentService;
-import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -21,23 +19,17 @@ import android.os.PowerManager;
 import android.support.annotation.RequiresApi;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Html;
 import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -117,7 +109,7 @@ public class MainActivity extends AppCompatActivity
 
     //Game variables
     private MemoryGame game;
-    private TextView levelText, enteredWords, gameWords;
+    private TextView levelText, tooltip, enteredWords, gameWords;
     private EditText wordEntry;
     private Button startGame, nextLevel, enterWord, restartLevel;
 
@@ -555,6 +547,8 @@ public class MainActivity extends AppCompatActivity
     public void setUpGame(){
         //Game related variables
         levelText = (TextView) findViewById(R.id.levelText);
+        tooltip = (TextView) findViewById(R.id.tooltip);
+        tooltip.setVisibility(View.GONE);
         enteredWords = (TextView) findViewById(R.id.enteredWordsText);
         enteredWords.setVisibility(View.GONE);
 
@@ -577,6 +571,8 @@ public class MainActivity extends AppCompatActivity
 
                     resetGameVisibility();
                     gameWords.setVisibility(View.VISIBLE);
+                    tooltip.setVisibility(View.VISIBLE);
+                    tooltip.setText(R.string.memorise_words);
                 }
                 else
                     Toast.makeText(MainActivity.this,
@@ -595,7 +591,8 @@ public class MainActivity extends AppCompatActivity
 
                 resetGameVisibility();
                 gameWords.setVisibility(View.VISIBLE);
-
+                tooltip.setVisibility(View.VISIBLE);
+                tooltip.setText(R.string.memorise_words);
                 startGame();
             }
         });
@@ -616,6 +613,8 @@ public class MainActivity extends AppCompatActivity
                 if(game.isWon()) {
                     resetGameVisibility();
                     nextLevel.setVisibility(View.VISIBLE);
+                    tooltip.setVisibility(View.VISIBLE);
+                    tooltip.setText(R.string.level_beat);
                 }
             }
         });
@@ -631,6 +630,8 @@ public class MainActivity extends AppCompatActivity
 
                 resetGameVisibility();
                 gameWords.setVisibility(View.VISIBLE);
+                tooltip.setVisibility(View.VISIBLE);
+                tooltip.setText(R.string.memorise_words);
             }
         });
     }
@@ -651,6 +652,8 @@ public class MainActivity extends AppCompatActivity
                         gameWords.setVisibility(View.GONE);
                         enterWord.setVisibility(View.VISIBLE);
                         restartLevel.setVisibility(View.VISIBLE);
+                        tooltip.setVisibility(View.VISIBLE);
+                        tooltip.setText(R.string.enter_memorised_words);
                     }
                 });
             }
@@ -668,6 +671,7 @@ public class MainActivity extends AppCompatActivity
         enterWord.setVisibility(View.GONE);
         startGame.setVisibility(View.GONE);
         restartLevel.setVisibility(View.GONE);
+        tooltip.setVisibility(View.GONE);
     }
 
     public void showBusinesses(final String businessType) {
