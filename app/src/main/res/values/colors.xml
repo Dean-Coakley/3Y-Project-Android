@@ -6,4 +6,5 @@
     <color name= "blu">#0000c4</color>
     <color name= "myblu"> #3F51B5</color>
     <color name="text_red_error"> #FF2222 </color>
+    <color name="textWhite"> #EEEEEE </color>
 </resources>
