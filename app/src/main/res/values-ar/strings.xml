@@ -51,4 +51,7 @@
     <string name="game_beat">You beat the game!</string>
     <string name="tap_button_to_record_voice">Tap Button to Record Voice</string>
     <string name="tweet_geofence">Tweet GeoFence</string>
+    <string name="memorise_words">Memorise the words below:</string>
+    <string name="level_beat">You beat the level!</string>
+    <string name="enter_memorised_words">Enter the words you memorised.</string>
 </resources>

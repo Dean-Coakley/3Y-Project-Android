@@ -72,7 +72,6 @@
     <string name="your_location_is_lat">Your location is: Lat:</string>
     <string name="comma_lon">, Lon:</string>
     <string name="show_current_location">Show current location</string>
-    <string name="you_are_beyond_the_safe_distance_from_your_home">You are beyond the safe distance from your home!</string>
     
   <!-- Strings related to game -->
     <string name="enter_word">Enter Word</string>
@@ -99,6 +98,9 @@
     <string name="end_time">End Time</string>
     <string name="calendar">Calendar</string>
     <string name="you_are_beyond_the_safe_distance_from_your_home">You are beyond the safe distance from your home</string>
+    <string name="memorise_words">Memorise the words below:</string>
+    <string name="level_beat">You beat the level!</string>
+    <string name="enter_memorised_words">Enter the words you memorised.</string>
 
     <string-array name="music">
         <item>Song 1</item><item>Song 2</item><item>Song 3</item>
