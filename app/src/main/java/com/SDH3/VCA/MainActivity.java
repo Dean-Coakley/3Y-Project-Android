@@ -2,9 +2,11 @@ package com.SDH3.VCA;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
@@ -249,8 +251,25 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            FirebaseAuth.getInstance().signOut();
-            super.onBackPressed();
+              android.support.v7.app.AlertDialog ad = new android.support.v7.app.AlertDialog.Builder(MainActivity.this).create();
+            ad.setMessage("Are you sure you want to log out?");
+
+            ad.setButton(DialogInterface.BUTTON_POSITIVE, "Log out",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface d, int i)
+                        {
+                            FirebaseAuth.getInstance().signOut();
+                            // super.onBackPressed();
+                            finish();
+                        }
+                    });
+            ad.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface d, int i)
+                        {}
+                    });
+            ad.show();
+
         }
     }
 
