@@ -103,13 +103,25 @@ public class DbManager {
                         user.setFName((String) dataSnapshot.getValue());
                         break;
                     case PATIENT_GEOFENCE_LAT_TAG:
-                        user.setGeofenceLatitude((Double) dataSnapshot.getValue());
+                        try {
+                            user.setGeofenceLatitude((Double) dataSnapshot.getValue());
+                        }catch(NullPointerException e){
+                            user.setGeofenceLatitude(-1);
+                        }
                         break;
                     case PATIENT_GEOFENCE_LONG_TAG:
-                        user.setGeofenceLongitude((Double) dataSnapshot.getValue());
+                        try {
+                            user.setGeofenceLongitude((Double) dataSnapshot.getValue());
+                        }catch(NullPointerException e){
+                            user.setGeofenceLongitude(-1);
+                        }
                         break;
                     case PATIENT_GEOFENCE_RADIUS_TAG:
-                        user.setGeofenceRadius((Double) dataSnapshot.getValue());
+                        try {
+                            user.setGeofenceRadius((Double) dataSnapshot.getValue());
+                        }catch(NullPointerException e){
+                            user.setGeofenceRadius(-1);
+                        }
                         break;
                 }
 

@@ -80,6 +80,12 @@ public class UserProfile {
     public void setGeofenceRadius(double geofenceRadius) {this.geofenceRadius = geofenceRadius;}
 
     public boolean isPatientWithinGeofence(){
+        if (this.geofenceLatitude == -1
+                || this.geofenceLongitude == -1
+                || this.geofenceRadius == -1){
+            return true;
+        }
+
         // Pythagoras's Beard! The patient has escaped!
         double x1 = geofenceLatitude;
         double x2 = latitude;
