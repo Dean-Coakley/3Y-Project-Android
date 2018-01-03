@@ -887,6 +887,9 @@ public class MainActivity extends AppCompatActivity
 
     public void notifyUserDataReady(boolean ready){
         if (ready){
+            TextView usernameView = (TextView)findViewById(R.id.username_label);
+            usernameView.setText(user.getFName() + " " + user.getLName());
+
             Intent startGeofenceService = new Intent(this, GeoFenceService.class);
             startGeofenceService.putExtra("geofence_latitude", String.valueOf(user.getGeofenceLatitude()));
             startGeofenceService.putExtra("geofence_longitude", String.valueOf(user.getGeofenceLongitude()));
