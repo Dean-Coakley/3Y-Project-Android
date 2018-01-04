@@ -2,7 +2,6 @@ package com.SDH3.VCA;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -32,7 +31,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -79,20 +77,15 @@ public class MainActivity extends AppCompatActivity
     TextView cityField, detailsField, currentTemperatureField, humidity_field, weatherIcon, updatedField;
     Typeface weatherFont;
 
-
     //Database
     DbManager db;
     UserProfile user;
-
-    // connected to a OneSheeld?
-    private boolean connected = false;
 
     //GUI
     private Button scanButton;
     private Switch toggleLights;
     private Switch toggleHeating;
     private Button disconnectButton;
-    private Button getGPS_button;
 
     //Sheeld
     private OneSheeldManager manager;
@@ -106,7 +99,6 @@ public class MainActivity extends AppCompatActivity
     private final int MY_PERMISSIONS_REQUEST_LOCATION = 123456789, REQ_CODE_SPEECH_INPUT = 100;
 
     // Call Permission final variables
-    private final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
     private final int PERMISSION_REQUEST = 100;
 
     //Game variables
@@ -118,6 +110,8 @@ public class MainActivity extends AppCompatActivity
     //Twitter variables
     private TwitterLoginButton loginButton;
     private Button tweetButton;
+
+    private int tab;
 
     private OneSheeldScanningCallback scanningCallback = new OneSheeldScanningCallback() {
         @Override
@@ -179,7 +173,7 @@ public class MainActivity extends AppCompatActivity
         manager.setConnectionRetryCount(1);
         manager.setScanningTimeOut(5);
         manager.setAutomaticConnectingRetriesForClassicConnections(true);
-        // add callback functions for handling connections / scanning
+        //add callback functions for handling connections / scanning
         manager.addConnectionCallback(connectionCallback);
         manager.addScanningCallback(scanningCallback);
 
@@ -232,6 +226,16 @@ public class MainActivity extends AppCompatActivity
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        //!!!THIS MUST BE AT THE BOTTOM OF ON-CREATE!!!
+        //If reloading activity get saved instance state
+        if ((savedInstanceState != null) && (savedInstanceState.getSerializable("tab") != null)) {
+            tab = savedInstanceState.getInt("tab");
+            switchTab(tab);
+        }
+        else {
+            tab = R.id.nav_home;
+        }
     }
 
     private void weatherServicesInit() {
@@ -278,15 +282,19 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         // when a new layout needs to be shown, make all other included layout 'GONE',
         // and make the requested layout 'VISIBLE'
-        int id = item.getItemId();
 
+        tab = item.getItemId();
+        return switchTab(tab);
+    }
+
+    public boolean switchTab(int id){
         home_view.setVisibility(View.GONE);
         calendar_view.setVisibility(View.GONE);
         weather_view.setVisibility(View.GONE);
         business_list_view.setVisibility(View.GONE);
         memory_game_view.setVisibility(View.GONE);
         music_view.setVisibility(View.GONE);
-        
+
         if (id == R.id.nav_home)
             home_view.setVisibility(View.VISIBLE);
         else if (id == R.id.nav_weather)
@@ -899,5 +907,13 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "An error occurred while fetching user data",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        //Save state of translation method
+        state.putInt("tab", tab);
+
+        super.onSaveInstanceState(state);
     }
 }
