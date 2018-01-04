@@ -56,6 +56,7 @@ public class DbManager {
 
     // this number is used to track if the user's attributes have been fully loaded. ( 0 = ready)
     public static int userAttributeReadyCount= 8;
+    private String uid;
 
     public DbManager() {
         firebaseDB = FirebaseDatabase.getInstance().getReference();
@@ -63,7 +64,7 @@ public class DbManager {
 
 
     public UserProfile initUser(final UserProfile user, String uID, final MainActivity mainActivity) {
-
+        this.uid = uID;
         // fill the user object with all the relevant data, starting with the uID
         user.setuID(uID);
 
@@ -191,21 +192,13 @@ public class DbManager {
         return user;
     }
 
-    public boolean setPatientCoordinates(double lat, double lon, String carerUID, String patientUID) {
-        boolean valid = false;
-        boolean conditions = (
-                lat < 90 && lat > -90
-                        && lon < 90 && lon > -90
-                        && carerUID != null
-                        && patientUID != null
-        );
-
-        if (conditions) {
+    public boolean setPatientCoordinates(double lat, double lon) {
             // when all conditions are met, send off the updates coords to Firebase
-            firebaseDB.child(PATIENTS_FLATTENED_DB_TAG).child(patientUID).child(PATIENT_LATITUDE_DB_TAG).setValue(lat);
-            firebaseDB.child(PATIENTS_FLATTENED_DB_TAG).child(patientUID).child(PATIENT_LONGITUDE_DB_TAG).setValue(lon);
+        if (uid != null) {
+            firebaseDB.child(PATIENTS_FLATTENED_DB_TAG).child(uid).child(PATIENT_LATITUDE_DB_TAG).setValue(lat);
+            firebaseDB.child(PATIENTS_FLATTENED_DB_TAG).child(uid).child(PATIENT_LONGITUDE_DB_TAG).setValue(lon);
             return true;
-        } else return false;
+        }else return false;
     }
 
     public ArrayList<Business> getBusinesses(String uID, final String businessType){
