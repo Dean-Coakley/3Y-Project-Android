@@ -21,6 +21,8 @@ public class LocationServicesManager implements LocationListener {
     private Context currentContext;
     private LocationManager locMan;
     private Location lastLocation;
+    private DbManager db;
+
 
     // has the location manager been set up to send LocationServicesManager updates?
     private boolean updatesRequested = false;
@@ -36,6 +38,11 @@ public class LocationServicesManager implements LocationListener {
         this.lastLocation = location;
         String message = "onLocationChanged: Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude();
         Log.i("VCA", message);
+        if (db != null) db.setPatientCoordinates(location.getLatitude(), location.getLongitude());
+    }
+
+    public void setDb(DbManager db){
+        this.db = db;
     }
 
     @Override
