@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity
         db = new DbManager();
         user = new UserProfile();
         db.initUser(user, uID, this);
-
+        locationServicesManager.setDb(db);
 
         speechText = (TextView) findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
