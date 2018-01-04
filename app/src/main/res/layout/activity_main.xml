@@ -10,141 +10,154 @@
     tools:openDrawer="start">
 
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
+
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFFFFF"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:theme="@style/AppTheme.PopupOverlay" />
-
-            <!--  this layout will 'include' all other layouts.
-            to switch between them, visibility is toggled. -->
-            <include layout = "@layout/memory_game"
-                android:id="@+id/game_include_tag"
-                android:visibility="gone"/>
-
-            <include layout = "@layout/calendar_view_main"
-                android:id="@+id/calendar_layout"
-                android:visibility="gone"/>
-
-            <include layout="@layout/weather"
-                android:id="@+id/weather_id"
-                android:visibility="gone"/>
-
-            <include layout="@layout/business_list_layout"
-                android:id="@+id/business_list_layout"
-                android:visibility="gone"/>
-
-            <include layout="@layout/media_player_layout"
-                android:id="@+id/music_layout"
-                android:visibility="gone"/>
-
-            <!--Main Layout-->
-            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FFFFFF"
-                android:id="@+id/home_layout">
+                android:orientation="vertical">
 
-                <DigitalClock
-                    android:id="@+id/digital_clock"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:layout_gravity="center" />
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:theme="@style/AppTheme.PopupOverlay" />
 
-                <Button
-                    android:id="@+id/scanButton"
+                <!--  this layout will 'include' all other layouts.
+                to switch between them, visibility is toggled. -->
+                <include
+                    android:id="@+id/game_include_tag"
+                    layout="@layout/memory_game"
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/calendar_layout"
+                    layout="@layout/calendar_view_main"
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/weather_id"
+                    layout="@layout/weather"
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/business_list_layout"
+                    layout="@layout/business_list_layout"
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/music_layout"
+                    layout="@layout/media_player_layout"
+                    android:visibility="gone" />
+
+                <!--Main Layout-->
+                <LinearLayout
+                    android:id="@+id/home_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:contentDescription="@string/ScanNearby"
-                    android:text="@string/scanForOnesheeld"
-                    android:textColor="@color/blu"
-                    android:visibility="visible" />
+                    android:background="#FFFFFF"
+                    android:orientation="vertical">
 
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <Switch
-                    android:id="@+id/toggle_lights"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:height="50dp"
-                    android:checked="false"
-                    android:padding="5dp"
-                    android:text="@string/lights"
-                    android:textColor="@color/blu"
-                    android:visibility="visible" />
-
-                <Switch
-                    android:id="@+id/toggle_heating"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:height="50dp"
-                    android:checked="false"
-                    android:padding="5dp"
-                    android:text="@string/heating"
-                    android:textColor="@color/blu"
-                    android:visibility="visible" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <Button
-                    android:id="@+id/disconnectButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/disconnect"
-                    android:textColor="@color/blu"/>
-
-                <TextView
-                    android:layout_marginTop="@dimen/extra_medium"
-                    android:id="@+id/txtSpeechInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tap_button_to_record_voice" />
-
-                <ImageButton
-                    android:id="@+id/btnSpeak"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/ic_voice"
-                    android:background="@android:color/transparent" />
-
-                <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
-                    <com.twitter.sdk.android.core.identity.TwitterLoginButton
-                        android:id="@+id/login_button"
-                        android:layout_width="match_parent"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="8dp"
+                    <DigitalClock
+                        android:id="@+id/digital_clock"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"/>
-                </RelativeLayout>
+                        android:layout_gravity="center"
+                        android:padding="20dp" />
 
-                <Button
-                    android:id="@+id/tweetButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tweet_geofence"
-                    android:layout_margin="8dp"
-                    android:background="#5BAAF4"
-                    android:textColor="#FFFFFF"/>
+                    <Button
+                        android:id="@+id/scanButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:contentDescription="@string/ScanNearby"
+                        android:text="@string/scanForOnesheeld"
+                        android:textColor="@color/blu"
+                        android:visibility="visible" />
 
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Switch
+                        android:id="@+id/toggle_lights"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:height="50dp"
+                        android:checked="false"
+                        android:padding="5dp"
+                        android:text="@string/lights"
+                        android:textColor="@color/blu"
+                        android:visibility="visible" />
+
+                    <Switch
+                        android:id="@+id/toggle_heating"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:height="50dp"
+                        android:checked="false"
+                        android:padding="5dp"
+                        android:text="@string/heating"
+                        android:textColor="@color/blu"
+                        android:visibility="visible" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:id="@+id/disconnectButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/disconnect"
+                        android:textColor="@color/blu" />
+
+                    <TextView
+                        android:id="@+id/txtSpeechInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/extra_medium"
+                        android:text="@string/tap_button_to_record_voice" />
+
+                    <ImageButton
+                        android:id="@+id/btnSpeak"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_voice" />
+
+                    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <com.twitter.sdk.android.core.identity.TwitterLoginButton
+                            android:id="@+id/login_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_margin="8dp"
+                            android:gravity="center" />
+                    </RelativeLayout>
+
+                    <Button
+                        android:id="@+id/tweetButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tweet_geofence"
+                        android:layout_margin="8dp"
+                        android:background="#5BAAF4"
+                        android:textColor="#FFFFFF" />
+
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+
+    </ScrollView>
 
 
     <android.support.design.widget.NavigationView
