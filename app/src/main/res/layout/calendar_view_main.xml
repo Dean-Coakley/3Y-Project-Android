@@ -3,17 +3,29 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <CalendarView
-        android:id="@+id/calendarView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/larg_bepis" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/addEventBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/add_event"
-        android:textColor="@color/blu"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/larg_bepis" />
+
+            <Button
+                android:id="@+id/addEventBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/add_event"
+                android:textColor="@color/blu" />
+        </LinearLayout>
+    </ScrollView>
+
 </LinearLayout>

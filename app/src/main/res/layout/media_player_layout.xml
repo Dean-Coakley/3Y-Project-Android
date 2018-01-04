@@ -3,28 +3,39 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent" android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/business_layout_header"
-            android:text="@string/music"
-            android:gravity="center"
-            android:textColor="@color/blu"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="@dimen/extra_medium"
-            android:paddingBottom="50dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <Spinner
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/music_link" />
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/business_layout_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="50dp"
+                android:text="@string/music"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/blu"
+                android:textSize="@dimen/extra_medium" />
+
+            <Spinner
+                android:id="@+id/music_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/play_music"
-                android:layout_gravity="center"
-                android:layout_marginTop="80dp"
-                android:src="@drawable/play_button"/>
+                        android:id="@+id/play_music"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="80dp"
+                        android:src="@drawable/play_button" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

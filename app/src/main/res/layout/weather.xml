@@ -4,69 +4,80 @@
     android:layout_height="match_parent" android:background="#FFFFFF">
 
 
-        <TextView
-            android:paddingTop="80dp"
-            android:id="@+id/city_field"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/blu"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/sorry_cannot_display_weather"/>
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/weather_icon"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/blu"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="90sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/current_temperature_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/blu"
-            android:textSize="50sp"
-            android:text="@string/click_below_to_refresh"/>
+                        <TextView
+                            android:id="@+id/city_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingTop="80dp"
+                            android:text="@string/sorry_cannot_display_weather"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/blu" />
 
-        <TextView
-            android:id="@+id/details_field"
-            android:layout_width="match_parent"
-            android:gravity="center"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blu"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            />
+                        <TextView
+                            android:id="@+id/weather_icon"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/blu"
+                            android:textSize="90sp" />
 
-        <TextView
-            android:id="@+id/humidity_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/blu"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            />
+                        <TextView
+                            android:id="@+id/current_temperature_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/click_below_to_refresh"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/blu"
+                            android:textSize="50sp" />
 
-        <TextView
-            android:id="@+id/updated_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/blu"
-            android:textSize="13sp" />
+                        <TextView
+                            android:id="@+id/details_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/blu" />
+
+                        <TextView
+                            android:id="@+id/humidity_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/blu" />
+
+                        <TextView
+                            android:id="@+id/updated_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/blu"
+                            android:textSize="13sp" />
+
+                        <Button
+                            android:id="@+id/refresh_weather"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="50dp"
+                            android:gravity="center"
+                            android:text="@string/refresh"
+                            android:textColor="@color/blu" />
+
+                </LinearLayout>
+        </ScrollView>
 
 
-        <Button
-            android:layout_margin="50dp"
-            android:textColor="@color/blu"
-            android:id="@+id/refresh_weather"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/refresh" />
 </LinearLayout>
