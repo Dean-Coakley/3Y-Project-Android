@@ -911,7 +911,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle state) {
-        //Save state of translation method
+        //Save state for current tab
         state.putInt("tab", tab);
 
         super.onSaveInstanceState(state);
